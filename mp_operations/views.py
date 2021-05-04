@@ -1,0 +1,725 @@
+
+# from constituent_operations.serializers import SendMessageSerializer
+from constituent_operations.models import IncidentReport, Message, RequestForm
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from mp_operations.models import ActionPlanAreaSummaryForMp, Project, User
+from rest_framework.generics import CreateAPIView, ListAPIView
+from .serializers import CreateProjectSerializer, ListConstituentsSerializer, ListProjectSerializer, MPRetrieveAllSubAdminSerializer, RNRetrieveIncidentReportSerializer, RNRetrieveMessageSerializer, RetrieveActionPlanSummaryEachAreaForMPSerializer, SearchConstituentsSerialiser, SearchProjectsSerialiser, SendEmailSerializer, SendEmailToConstSerializer, SendMessageToConstituentSerializer, RNRetrieveRequestFormSerializer
+from users.models import Constituency, Constituent, Country, Town, Area, SubAdminPermission, Region, MpProfile, OTPCode
+from rest_framework import status
+from django.core.mail import EmailMessage
+from django.shortcuts import get_object_or_404
+from users.serializers import ConstituentRegisterSerializer, countryCode
+from users.utils import generate_OTP, generate_userID, send_sms, sending_mail
+
+
+
+class CreateProjectView(CreateAPIView):
+    serializer_class = CreateProjectSerializer
+    permission_classes = ()
+    lookup_field = 'id'
+    lookup_url_kwarg = "id"
+    
+    def create(self, request):
+        print("------------------------------------")
+        print(request.data)
+        user_id = request.data['user_id']
+
+        try:
+            user = User.objects.get(system_id_for_user=user_id)
+        except Exception:
+            raise serializers.ValidationError("Invalid ID provided")
+
+        project = Project.objects.create(
+            mp = user,
+            name = request.data['name'],
+            place = request.data['place'],
+            media = request.data['media'],
+            description = request.data['description']
+        )
+        print("------------------------------------")
+
+        project.save()
+
+   
+        return Response(
+            {
+                "status":status.HTTP_200_OK,
+                "message":"Project has been created successfully."
+            }
+        )
+
+
+class ListProjectView(ListAPIView):
+    serializer_class = ListProjectSerializer
+    queryset=Project.objects.all()
+    permission_classes = ()
+
+
+    def list(self, request, id):
+        projects = Project.objects.filter(mp__system_id_for_user=id)
+
+        len(projects)
+
+        data = ListProjectSerializer(projects, many=True).data
+        data = {
+            'projects':data
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+# customized for data tabke search
+class CustomListProjectView(APIView):
+    serializer_class = ListProjectSerializer
+    queryset=Project.objects.all()
+    permission_classes = ()
+
+
+    def post(self, request, id):
+        projects = Project.objects.filter(mp__system_id_for_user=id)
+
+        len(projects)
+
+        data = ListProjectSerializer(projects, many=True).data
+
+        data = {
+            'data':data
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+# customised for data table search
+class ListConstituentsForMpView(APIView):
+    serializer_class = ListConstituentsSerializer
+    queryset=Project.objects.all()
+    permission_classes = ()
+
+
+    def post(self, request, id):
+        user = User.objects.get(system_id_for_user=id)
+        constituency = user.active_constituency
+
+        data = ListConstituentsSerializer(constituency.members, many=True).data
+
+        data = {
+            'data':data
+        }
+        return Response(data,status=status.HTTP_200_OK)
+
+
+class SendEmailView(APIView):
+    permission_classes = ()
+
+    def post(self, request):
+        
+        try:
+            data = SendEmailSerializer(data=request.data)
+
+            data.is_valid(raise_exception=True)
+
+            user_id = data['user_id'].value
+            subject = data['subject'].value
+            message = data['message'].value
+            attached_file = data['attached_file']
+
+            mp = User.objects.get(system_id_for_user=user_id)
+
+            constituencies = mp.constituency.all()
+
+            emails = []
+
+            for constituency in constituencies:
+                for user in constituency.members.all():
+                    emails.append(user.email)
+
+
+
+            print(emails)
+
+            mail = EmailMessage(
+                subject,
+                message,
+                'rennintech.com',
+                emails
+            )
+
+            
+
+            if request.data['attached_file']:
+                attached_file=request.data['attached_file']
+                mail.attach(attached_file.name, attached_file.read(), attached_file.content_type)
+            
+            mail.send()
+            data = {
+                "message":"Email has been sent successfully"
+            }
+        except Exception as e:
+            data = {
+                "message":f"Sorry something went wrong, try again. {e}"
+            }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+        
+class ProjectsSearchEngineView(ListAPIView):
+    permission_classes = ()
+    def list(self, request, id, query):
+        projects = Project.objects.filter(mp__system_id_for_user=id, name__icontains=query)       
+        data = SearchProjectsSerialiser(projects, many=True)
+        return Response({
+            "results":data.data},
+            status=status.HTTP_200_OK
+        )
+
+class ConstituentsSearchEngineView(ListAPIView):
+    permission_classes = ()
+    def list(self, request, constituency, query):
+        constituency = Constituency.objects.get(id=constituency)
+        constituents = constituency.members.all()
+
+        data = []
+        for i in constituents:
+            if query.lower() in i.full_name.lower():
+                data.append(i)
+        
+        data = SearchConstituentsSerialiser(data, many=True)
+
+        return Response({
+            "results":data.data},
+            status=status.HTTP_200_OK
+        )
+
+
+class RetrieveIncidentReportView(APIView):
+    permission_classes=()
+    def get(self, request, id):
+        incident_reports = IncidentReport.objects.filter(receiver__system_id_for_user=id)
+        data = RNRetrieveIncidentReportSerializer(incident_reports,many=True)
+
+        # data.is_valid(raise_exception=True)
+        
+        data = {
+            "data":data.data
+        }
+
+        return Response(data)
+    
+
+class RetrieveMessageView(APIView):
+    permission_classes=()
+    def get(self, request, id):
+        incident_reports = Message.objects.filter(receiver__system_id_for_user=id)
+        data = RNRetrieveMessageSerializer(incident_reports,many=True)
+
+        # data.is_valid(raise_exception=True)
+        
+        data = {
+            "data":data.data
+        }
+
+        return Response(data)
+        
+
+class RetrieveRequestNotificationsView(APIView):
+    permission_classes=()
+    def get(self, request, id):
+
+        incident_reports = IncidentReport.objects.filter(receiver__system_id_for_user=id)
+        incident_reports = RNRetrieveIncidentReportSerializer(incident_reports,many=True)
+
+
+        messages = Message.objects.filter(receiver__system_id_for_user=id)
+        messages = RNRetrieveMessageSerializer(messages,many=True)
+
+        requestform = RequestForm.objects.filter(receiver__system_id_for_user=id)
+        requestform = RNRetrieveRequestFormSerializer(requestform,many=True)
+
+
+        data = {
+            "messages":messages.data,
+            "incident_reports":incident_reports.data,
+            "request_form":requestform.data,
+            "status":status.HTTP_200_OK
+
+        }
+
+        return Response(data)
+
+
+
+class RetrieveAllSubAdminsView(APIView):
+    permission_classes=()
+    def get(self, request, id):
+        try:
+            mp = User.objects.get(system_id_for_user=id)
+            sub_admins = mp.sub_admins.all()
+
+            data = MPRetrieveAllSubAdminSerializer(sub_admins,many=True)
+
+            print(data.data)
+            data = {
+                "status":status.HTTP_200_OK,
+                "subadmins":data.data
+            }
+        except Exception as e:
+            print(e)
+            data = {
+                "status":status.HTTP_500_INTERNAL_SERVER_ERROR,
+                "message":"Sorry, something went wrong."
+            }
+            
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class SendMessageToContView(APIView):
+    permission_classes = ()
+
+    def post(self, request):
+        try:
+            data = SendMessageToConstituentSerializer(data=request.data)
+
+            data.is_valid(raise_exception=True)
+
+            receiver = data['receiver_id'].value
+            sender = data['sender_id'].value
+
+            receiver = User.objects.get(system_id_for_user=receiver)
+            sender = User.objects.get(system_id_for_user=sender)
+
+            message = Message.objects.create(
+                sender=sender,
+                receiver=receiver,
+                message=data['message'].value,
+                attached_file = data['attached_file'].value
+            )
+
+            message.save()
+
+            data = {
+                "status":status.HTTP_200_OK,
+                "message":"Message has been sent successfully."
+            }
+
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            data = {
+                "status":status.status.HTTP_400_BAD_REQUEST,
+                "message":"Message was not sent successfully."
+            }
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+class SendEmailToConstView(APIView):
+    permission_classes=()
+
+    def post(self, request):
+        try:
+            data = SendEmailToConstSerializer(data=request.data)
+            data.is_valid(raise_exception=True)
+
+            sender = data['sender_id'].value
+            receiver = data['receiver_id'].value
+            subject = data['subject'].value
+            message = data['message'].value
+            
+
+            sender = User.objects.get(system_id_for_user=sender)
+            receiver = User.objects.get(system_id_for_user=receiver)
+
+
+
+            mail = EmailMessage(
+                f"{subject} - Email from {sender.full_name} (MP)",
+                message,
+                'rennintech.com',
+                [receiver.email]
+            )
+
+
+            if request.data["attached_file"]:
+                
+                attached_file = request.data["attached_file"]
+
+                mail.attach(attached_file.name, attached_file.read(), attached_file.content_type)
+            else:
+                print("--------------------------------------")
+                print("NOT Adding file")
+                print(request.data)
+            
+            mail.send()
+
+            data = {
+                "status":status.HTTP_200_OK,
+                "message":f"Email has been sent to {receiver.full_name}"
+            }
+
+            return Response(data, status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            data = {
+                "status":status.HTTP_400_BAD_REQUEST,
+                "message":f"Email was not sent {receiver.full_name}"
+            }
+
+            return Response(data, status.HTTP_400_BAD_REQUEST)    
+
+class RetrieveActionPlanSummaryEachAreaForMPView(APIView):
+    permission_classes=()
+
+    def get(self, request, id, date):
+        user = User.objects.get(system_id_for_user=id)
+
+
+        action_plans = ActionPlanAreaSummaryForMp.objects.filter(date__year=date, area=user.active_area, constituency=user.active_constituency)
+
+        print(action_plans)
+
+        data = RetrieveActionPlanSummaryEachAreaForMPSerializer(action_plans, many=True)
+
+        
+
+        data = {
+            "status":status.HTTP_200_OK,
+            "data":data.data
+        }
+
+        return Response(data, status.HTTP_200_OK)
+
+
+
+# Unconsumed endpoints.....................................
+class MakeSubAdminView(APIView):
+    permission_classes = ()
+    def post(self, request, id, subadmin_id):
+        print(id)
+        print(subadmin_id)
+    
+        try:
+            mp = User.objects.get(system_id_for_user=id)
+            const = Constituent.objects.get(user__system_id_for_user=subadmin_id)
+
+            const.is_subadmin=True
+            const.subadmin_for=mp
+
+            const.save()
+
+            permissions = SubAdminPermission.objects.create(
+                sub_admin=const,
+                sub_admin_for=mp.mp_profile
+            )
+
+            data = {
+                "status":status.HTTP_200_OK,
+                "message":f"{const.user.full_name} is now your sub-admin."
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+
+            data = {
+                "status":status.HTTP_500_INTERNAL_SERVER_ERROR,
+                "message":"Sorry something went wrong, try again."
+            }
+            return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UnmakeSubAdmin(APIView):
+    permission_classes = ()
+
+    def post(self, request, id, subadmin_id)
+# customize email content to allow email verifivation
+class CreateUserAccountForOtherView(CreateAPIView):
+    queryset=User.objects.all()
+    serializer_class = ConstituentRegisterSerializer
+    permission_classes=()
+
+    def create(self, request, id, type_):
+        country = get_object_or_404(Country, id=request.data['country'])
+        region = get_object_or_404(Region, id=request.data['region'])
+        constituency = get_object_or_404(Constituency, id=request.data['constituency'])
+        town = get_object_or_404(Town, id=request.data['town'])
+        area = get_object_or_404(Area, id=request.data['area'])
+        mp = User.objects.get(system_id_for_user=id)
+
+    
+
+        CD = countryCode[country.name]
+        system_id_for_user =""
+
+        while True:
+            nums = generate_userID()
+            system_id_for_user = str(CD)+str(nums)
+            user = User.objects.filter(system_id_for_user=system_id_for_user)
+
+            if user.exists():
+                pass
+            else:
+                system_id_for_user = system_id_for_user
+                break
+
+        
+        email = request.data['email']
+        contact = request.data['contact']
+        if User.objects.filter(email=email).exists():
+            return Response({
+                "status":status.HTTP_500_INTERNAL_SERVER_ERROR,
+                "message":"Email already exist"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        elif User.objects.filter(contact=contact).exists():
+            return Response({
+                "status":status.HTTP_500_INTERNAL_SERVER_ERROR,
+                "message":"Contact already exist"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        elif len(str(request.data['date_of_birth'])) < 1 or request.data['date_of_birth']=="null":
+            return Response({
+                "status":status.HTTP_500_INTERNAL_SERVER_ERROR,
+                "message":"Date of birth is required."
+            })
+        elif len(str(request.data['voters_id'])) < 1 or request.data['voters_id']=="null":
+            return Response({
+                "status":status.HTTP_500_INTERNAL_SERVER_ERROR,
+                "message":"Voter's ID is required."
+            })
+        
+        else:
+        
+        # Creating User and Constituency Profile
+            try:
+                otp_code = generate_OTP()
+
+                otp = OTPCode.objects.create(code_for=request.data['email'],code=otp_code)
+                otp.save()
+                sending_mail(f"Hello {request.data['full_name']}\nThis is your verification code: {otp_code}","NsromaHub Account email verification", request.data['email'])
+
+
+                if type_.lower() == 'subadmin':
+                    user = User.objects.create(
+                    email=request.data['email'],
+                    # username=validated_data['username'],
+                    full_name=request.data['full_name'],
+                    date_of_birth=request.data['date_of_birth'],
+                    contact=request.data['contact'],
+                    country=country,
+                    # is_superuser=request.data['is_superuser'],
+                    is_constituent = True,
+                    system_id_for_user=system_id_for_user,
+                    is_active=False,
+                    active_constituency=constituency
+                    )
+
+                    user.set_password(request.data['password'])
+                    user.save()
+
+                    user.constituency.add(constituency)
+                    user.region.add(region)
+
+
+                    constituent = Constituent(
+                        user = user,
+                        voters_id = request.data['voters_id'],
+                        is_subadmin = True,
+                        subadmin_for = mp
+                    )
+
+                    constituent.save()
+
+                    constituent.town.add(town)
+                    constituent.area.add(area)
+
+                    constituent.save()
+
+                    permissions = SubAdminPermission.objects.create(
+                        sub_admin = constituent,
+                        sub_admin_for=mp.mp_profile
+                    )
+
+                    permissions.save()
+
+                    return Response({
+                    "status":status.HTTP_201_CREATED,
+                    "message":"SubAdmin Account registration is successful",
+                    "email":user.email
+                    }, status=status.HTTP_201_CREATED)
+
+                elif type_.lower() == 'security':
+                    user = User.objects.create(
+                    email=request.data['email'],
+                    # username=validated_data['username'],
+                    full_name=request.data['full_name'],
+                    date_of_birth=request.data['date_of_birth'],
+                    contact=request.data['contact'],
+                    country=country,
+                    # is_superuser=request.data['is_superuser'],
+                    is_constituent = True,
+                    system_id_for_user=system_id_for_user,
+                    is_active=False,
+                    active_constituency=constituency,
+                    is_security_person =True
+                    )
+
+                    user.set_password(request.data['password'])
+                    user.save()
+
+                    user.constituency.add(constituency)
+                    user.region.add(region)
+
+
+                    constituent = Constituent(
+                        user = user,
+                        voters_id = request.data['voters_id'],
+                    )
+
+                    constituent.save()
+
+                    constituent.town.add(town)
+                    constituent.area.add(area)
+
+                    constituent.save()
+
+                    return Response({
+                    "status":status.HTTP_201_CREATED,
+                    "message":"Account registration is successful",
+                    "email":user.email
+                    }, status=status.HTTP_201_CREATED)
+
+                
+                elif type_.lower() == 'assemblyman':
+                    user = User.objects.create(
+                    email=request.data['email'],
+                    # username=validated_data['username'],
+                    full_name=request.data['full_name'],
+                    date_of_birth=request.data['date_of_birth'],
+                    contact=request.data['contact'],
+                    country=country,
+                    # is_superuser=request.data['is_superuser'],
+                    is_constituent = True,
+                    system_id_for_user=system_id_for_user,
+                    is_active=False,
+                    active_constituency=constituency,
+                    is_assembly_man =True
+                    )
+
+
+                    user.set_password(request.data['password'])
+                    user.save()
+
+                    user.constituency.add(constituency)
+                    user.region.add(region)
+
+
+                    constituent = Constituent(
+                        user = user,
+                        voters_id = request.data['voters_id'],
+                    )
+
+                    constituent.save()
+
+                    constituent.town.add(town)
+                    constituent.area.add(area)
+
+                    constituent.save()
+
+                    return Response({
+                    "status":status.HTTP_201_CREATED,
+                    "message":"Assembly Man Account registration is successful",
+                    "email":user.email
+                    }, status=status.HTTP_201_CREATED)
+
+
+                elif type_.lower() == 'medical_center':
+                    user = User.objects.create(
+                    email=request.data['email'],
+                    # username=validated_data['username'],
+                    full_name=request.data['full_name'],
+                    date_of_birth=request.data['date_of_birth'],
+                    contact=request.data['contact'],
+                    country=country,
+                    # is_superuser=request.data['is_superuser'],
+                    is_constituent = True,
+                    system_id_for_user=system_id_for_user,
+                    is_active=False,
+                    active_constituency=constituency,
+                    is_medical_center =True
+                    )
+
+
+                    user.set_password(request.data['password'])
+                    user.save()
+
+                    user.constituency.add(constituency)
+                    user.region.add(region)
+
+
+                    constituent = Constituent(
+                        user = user,
+                        voters_id = request.data['voters_id'],
+                    )
+
+                    constituent.save()
+
+                    constituent.town.add(town)
+                    constituent.area.add(area)
+
+                    constituent.save()
+
+                    return Response({
+                    "status":status.HTTP_201_CREATED,
+                    "message":"Medical Center Account registration is successful",
+                    "email":user.email
+                    }, status=status.HTTP_201_CREATED)
+
+                
+                else:
+                    user = User.objects.create(
+                    email=request.data['email'],
+                    # username=validated_data['username'],
+                    full_name=request.data['full_name'],
+                    date_of_birth=request.data['date_of_birth'],
+                    contact=request.data['contact'],
+                    country=country,
+                    # is_superuser=request.data['is_superuser'],
+                    is_constituent = True,
+                    system_id_for_user=system_id_for_user,
+                    is_active=False,
+                    active_constituency=constituency,
+                    )
+
+                
+
+                    user.set_password(request.data['password'])
+                    user.save()
+
+                    user.constituency.add(constituency)
+                    user.region.add(region)
+
+
+                    constituent = Constituent(
+                        user = user,
+                        voters_id = request.data['voters_id'],
+                    )
+
+                    constituent.save()
+
+                    constituent.town.add(town)
+                    constituent.area.add(area)
+
+                    constituent.save()
+
+                    return Response({
+                    "status":status.HTTP_201_CREATED,
+                    "message":"Account registration is successful",
+                    "email":user.email
+                    }, status=status.HTTP_201_CREATED)
+                    
+                    
+
+
+            except Exception as e:
+                print(e)
+
+                return Response({
+                    "status":status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message":"Something went wrong, check your internet connection and try again.",
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
