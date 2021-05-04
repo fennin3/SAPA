@@ -17,4 +17,6 @@ admin.site.register(models.CustomUser)
 admin.site.register(models.OTPCode)
 admin.site.register(models.Town)
 admin.site.register(models.Area)
+admin.site.register(models.UserPermissionCust)
+admin.site.register(models.Permission)
 

@@ -141,4 +141,21 @@ class SubAdminPermission(models.Model):
 class OTPCode(models.Model):
     code_for = models.CharField(max_length=100)
     code = models.CharField(max_length=7)
+
+
+class Permission(models.Model):
+    name = models.CharField(max_length=5000)
+
+    def __str__(self):
+        return self.name
+
+
+class UserPermissionCust(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    permission_name = models.CharField(max_length=5000, null=True, blank=True)
+    permission_value = models.BooleanField(default=False) 
+
+
+    def __str__(self):
+        return self.permission_name
     

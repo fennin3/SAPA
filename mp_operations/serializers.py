@@ -2,7 +2,7 @@ from constituent_operations.models import IncidentReport, Message, RequestForm
 from rest_framework import serializers
 from .models import ActionPlanAreaSummaryForMp, Project, Comment
 from django.contrib.auth import get_user_model
-from users.models import Constituent, SubAdminPermission
+from users.models import Constituent, SubAdminPermission, Town, Area
 from users.serializers import ListAllAreaSerializer, ListAllConstituencySerializer
 
 
@@ -25,6 +25,16 @@ class SubAdminPermissionSerializer(serializers.ModelSerializer):
         model=SubAdminPermission
         exclude = ['sub_admin']
 
+class TownSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Town
+        fields="__all__"
+
+class AreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Area
+        fields="__all__"
+
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,6 +48,7 @@ class CreateProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model=Project
         exclude = ['mp','comments']
+
 
     
 
@@ -112,9 +123,11 @@ class RNRetrieveMessageSerializer(serializers.ModelSerializer):
 class MPRetrieveAllSubAdminSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     permissions = SubAdminPermissionSerializer()
+    town = TownSerializer(read_only=True, many=True)
+    area = AreaSerializer(read_only=True, many=True)
     class Meta:
         model = Constituent
-        fields = ['voters_id','town','is_subadmin', 'user', 'permissions']
+        fields = ['voters_id','town','area','is_subadmin', 'user', 'permissions']
 
 class SendMessageToConstituentSerializer(serializers.ModelSerializer):
     sender_id = serializers.CharField(max_length=15)

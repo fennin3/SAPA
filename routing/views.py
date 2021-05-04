@@ -5,7 +5,7 @@ import os
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 from django.contrib.auth import get_user_model
-
+from users.models import UserPermissionCust, Permission
 
 User = get_user_model()
 
@@ -26,7 +26,9 @@ arr = [
     'constituents',
     'incident',
     'request',
-    'send-email'
+    'send-email',
+    'view-admins',
+    'get_permissions'
 ]
 
 
@@ -38,11 +40,22 @@ class WebPageView(APIView):
         call_ = request.data['page_name']
         print(call_ in arr)
 
+        all_permissions = Permission.objects.all()
+
+        try:
+            permission = UserPermissionCust.objects.filter(user__system_id_for_user=id)
+        except Exception as e:
+            permission = "hhh"
+
         if call_ in arr:
+
+            
             try:
                 
                 data = {
-                    'id':id
+                    'id':id,
+                    "permission":permission,
+                    "all_permissions":all_permissions
                 }
                 
                 return Response(data, template_name=f"routing/{call_}.html")
