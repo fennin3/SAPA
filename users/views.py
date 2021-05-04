@@ -243,12 +243,13 @@ class UserLoginView(APIView):
             "is_security_person":user_.is_security_person,
             "is_medical_center":user_.is_medical_center,
             "is_assembly_man":user_.is_assembly_man,
+            "is_subadmin":user_.is_subadmin,
             'contact':user_.contact,
             'date_of_birth':user_.date_of_birth,
             'system_id_for_user':user_.system_id_for_user,
             'active_constituency':ac.data,
             'active_town':at.data,
-            'active_area':ar.data,
+            'active_area':ar.data
 
             }
         status_code = status.HTTP_200_OK

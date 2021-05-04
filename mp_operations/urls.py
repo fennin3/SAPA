@@ -32,6 +32,7 @@ urlpatterns = [
 
     # Making subadmins and setting permissions
     path("mp-make-subadmin/<id>/<subadmin_id>/", MakeSubAdminView.as_view(), name="make_subadmin"),
+    path("mp-unmake-subadmin/<id>/<subadmin_id>/", UnmakeSubAdmin.as_view(), name="unmake_subadmin"),
     path("retrieve-all-subadmins/<id>/", RetrieveAllSubAdminsView.as_view(), name="make_subadmin"),
 
     # Action plans
@@ -39,8 +40,10 @@ urlpatterns = [
     
 
     # creating account for others
-    path("create-account-for-others/<id>/<type_>/", CreateUserAccountForOtherView.as_view(), name="create_account_for_others")
+    path("create-account-for-others/<id>/<type_>/", CreateUserAccountForOtherView.as_view(), name="create_account_for_others"),
 
 
+    # Setting permissions
+    path("set-permission/<id>/<subadmin_id>/<permission>/", SetPermissionsForSubAdmin.as_view(), name="set_permission")
     
 ] 

@@ -83,6 +83,7 @@ class CustomUser(AbstractUser):
     active_town = models.ForeignKey(Town, on_delete=models.CASCADE, blank=True, null=True)
     active_area = models.ForeignKey(Area, on_delete=models.CASCADE, blank=True, null=True)
     profile_picture = models.ImageField(upload_to="user_profile_pics/", blank=True, null=True, default="default.jpg")
+    is_subadmin = models.BooleanField(default=False)
     REQUIRED_FIELDS = []
 
     # class Meta:
@@ -111,18 +112,9 @@ class Constituent(models.Model):
     def __str__(self):
         return self.user.full_name
 
-
-
-
-
     def __str__(self):
         return self.user.full_name
-    
-
-    
-
-
-
+   
 
 class MpProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True, related_name="mp_profile")
@@ -140,6 +132,8 @@ class SubAdminPermission(models.Model):
     can_post_projects = models.BooleanField(default=True)
     can_read_requests = models.BooleanField(default=True)
     can_send_emails = models.BooleanField(default=True)
+    can_reply_messages = models.BooleanField(default=True)
+    can_read_incident = models.BooleanField(default=True)
     sub_admin_for = models.ForeignKey(MpProfile, on_delete=models.CASCADE, blank=True, null=True)
 
 

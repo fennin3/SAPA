@@ -398,6 +398,7 @@ class MakeSubAdminView(APIView):
             const = Constituent.objects.get(user__system_id_for_user=subadmin_id)
 
             const.is_subadmin=True
+            const.user.is_subadmin=True
             const.subadmin_for=mp
 
             const.save()
@@ -425,7 +426,29 @@ class MakeSubAdminView(APIView):
 class UnmakeSubAdmin(APIView):
     permission_classes = ()
 
-    def post(self, request, id, subadmin_id)
+    def post(self, request, id, subadmin_id):
+        const = Constituent.objects.get(user__system_id_for_user=subadmin_id)
+        mp = MpProfile.objects.get(user__system_id_for_user=id)
+
+        sub = SubAdminPermission.objects.get(
+            sub_admin=const,
+            sub_admin_for=mp
+        )
+        sub.delete()
+
+        const.is_subadmin=False
+        const.user.is_subadmin=False
+
+        const.subadmin_for = None
+        const.save()
+
+        data = {
+            "status":status.HTTP_200_OK,
+            "message":f"{const.user.full_name} is no more your subadmin."
+        }
+
+        return Response(data, status.HTTP_200_OK)
+
 # customize email content to allow email verifivation
 class CreateUserAccountForOtherView(CreateAPIView):
     queryset=User.objects.all()
@@ -503,7 +526,8 @@ class CreateUserAccountForOtherView(CreateAPIView):
                     is_constituent = True,
                     system_id_for_user=system_id_for_user,
                     is_active=False,
-                    active_constituency=constituency
+                    active_constituency=constituency,
+                    is_subadmin=True
                     )
 
                     user.set_password(request.data['password'])
@@ -721,5 +745,143 @@ class CreateUserAccountForOtherView(CreateAPIView):
                     "message":"Something went wrong, check your internet connection and try again.",
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+# list_of_permissions = [
+#     ,
+#     ,
+#     ,
+#     ,
+#     ,
+
+# ]
+
+
+class SetPermissionsForSubAdmin(APIView):
+    permission_classes=()
+
+    def post(self, request, id, subadmin_id, permission):
+        const = Constituent.objects.get(user__system_id_for_user=subadmin_id)
+        mp = MpProfile.objects.get(user__system_id_for_user=id)
+
+        permissions = SubAdminPermission.objects.get(sub_admin=const, sub_admin_for=mp)
+
+        if permission.lower() == 'can_post_projects':
+            if permissions.can_post_projects:
+                permissions.can_post_projects = False
+
+                permissions.save()
+
+                return Response(
+                {
+                    "status":status.HTTP_200_OK,
+                    "message":f"{const.user.full_name} can not post projects."
+                }
+                )
+            else:
+                permissions.can_post_projects=True
+
+                permissions.save()
+                return Response(
+                {
+                    "status":status.HTTP_200_OK,
+                    "message":f"{const.user.full_name} can now post projects."
+                }
+                )
+
+        elif permission.lower() == 'can_read_requests':
+            if permissions.can_read_requests:
+                permissions.can_read_requests = False
+
+                permissions.save()
+
+                return Response(
+                {
+                    "status":status.HTTP_200_OK,
+                    "message":f"{const.user.full_name} can not read request forms."
+                }
+            )
+            else:
+                permissions.can_read_requests=True
+
+                permissions.save()
+                return Response(
+                {
+                    "status":status.HTTP_200_OK,
+                    "message":f"{const.user.full_name} can now read request forms."
+                } )
+        
+        elif permission.lower() == 'can_send_emails':
+            if permissions.can_send_emails:
+                permissions.can_send_emails = False
+
+                permissions.save()
+
+                return Response(
+                {
+                    "status":status.HTTP_200_OK,
+                    "message":f"{const.user.full_name} can not send emails."
+                }
+                )
+            else:
+                permissions.can_send_emails=True
+
+                permissions.save()
+                return Response(
+                {
+                    "status":status.HTTP_200_OK,
+                    "message":f"{const.user.full_name} can now send emails."
+                } )
+
+        elif permission.lower() == 'can_reply_messages':
+            if permissions.can_reply_messages:
+                permissions.can_reply_messages = False
+
+                permissions.save()
+
+                return Response(
+                {
+                    "status":status.HTTP_200_OK,
+                    "message":f"{const.user.full_name} can not reply messages."
+                }
+            )
+            else:
+                permissions.can_reply_messages=True
+
+                permissions.save()
+                return Response(
+                {
+                    "status":status.HTTP_200_OK,
+                    "message":f"{const.user.full_name} can now reply messages."
+                } )            
+
+        elif permission.lower() == 'can_read_incident':
+            if permissions.can_read_incident:
+                permissions.can_read_incident = False
+
+                permissions.save()
+
+                return Response(
+                {
+                    "status":status.HTTP_200_OK,
+                    "message":f"{const.user.full_name} can not reply messages."
+                }
+            )
+            else:
+                permissions.can_read_incident=True
+
+                permissions.save()
+                return Response(
+                {
+                    "status":status.HTTP_200_OK,
+                    "message":f"{const.user.full_name} can now reply messages."
+                }  
+                )     
+
+        else:
+            return Response({
+                "message":"hello"}
+            )     
+
+            
 
 
