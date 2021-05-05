@@ -273,55 +273,72 @@
   }
   function deleteAdmin(tthis) {
     var delete_id = $(tthis).data("id");
-
-    $.ajax({
-      url: "http://xtailor.eu-4.evennode.com/page",
-      type: "POST",
-      data: JSON.stringify({
-        delete_id: delete_id,
-        callback: "permission/delete",
-      }),
-      contentType: "application/json; charset=UTF-8",
-      dataType: "json",
-      cache: false,
-      processData: false,
-      beforeSend: function () {
-        KTApp.blockPage({
-          overlayColor: "#000000",
-          state: "primary",
-          message: "Please Wait...",
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This user will be removed from your sub admins!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, remove!",
+      customClass: {
+        confirmButton: "btn font-weight-bold btn-light-primary",
+        cancelButton: "btn font-weight-bold btn-light-info",
+      },
+    }).then(function (result) {
+      if (result.value) {
+        $.ajax({
+          url: `http://localhost:8000/mp-operations/mp-unmake-subadmin/${user_details.system_id_for_user}/${delete_id}/`,
+          type: "POST",
+          dataType: "json",
+          cache: false,
+          beforeSend: function () {
+            KTApp.blockPage({
+              overlayColor: "#000000",
+              state: "primary",
+              message: "Please Wait...",
+            });
+          },
+          success: function (data) {
+            if (data.status === 200) {
+              swal
+                .fire({
+                  text: data.message,
+                  icon: "success",
+                  buttonsStyling: false,
+                  confirmButtonText: "Ok, got it!",
+                  customClass: {
+                    confirmButton: "btn font-weight-bold btn-light-primary",
+                  },
+                })
+                .then(() => $("#cb_datatable").KTDatatable("reload"));
+            } else {
+              swal.fire({
+                text: "An error occurred and that is all we know",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                  confirmButton: "btn font-weight-bold btn-light-primary",
+                },
+              });
+            }
+            KTApp.unblockPage();
+          },
+          error: function (error) {
+            console.error("an error occurred retry", error);
+            swal
+              .fire({
+                text: `Error ${error.message}`,
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                  confirmButton: "btn font-weight-bold btn-light-danger",
+                },
+              })
+              .then(() => KTApp.unblockPage());
+          },
         });
-      },
-      success: function (data) {
-        if (data.status === 200) {
-          $("#ajax_response").html(data.message);
-        } else {
-          swal.fire({
-            text: "An error occurred and that is all we know",
-            icon: "error",
-            buttonsStyling: false,
-            confirmButtonText: "Ok, got it!",
-            customClass: {
-              confirmButton: "btn font-weight-bold btn-light-primary",
-            },
-          });
-        }
-        KTApp.unblockPage();
-      },
-      error: function (error) {
-        console.error("an error occurred retry", error);
-        swal
-          .fire({
-            text: `Error ${error.message}`,
-            icon: "error",
-            buttonsStyling: false,
-            confirmButtonText: "Ok, got it!",
-            customClass: {
-              confirmButton: "btn font-weight-bold btn-light-danger",
-            },
-          })
-          .then(() => KTApp.unblockPage());
-      },
+      }
     });
   }
 </script>

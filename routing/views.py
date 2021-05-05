@@ -28,7 +28,10 @@ arr = [
     'request',
     'send-email',
     'view-admins',
-    'get_permissions'
+    'get_permissions',
+    'action-mp',
+    'add-admin',
+    'medical-center'
 ]
 
 
@@ -39,6 +42,7 @@ class WebPageView(APIView):
     def post(self, request, id):
         call_ = request.data['page_name']
         print(call_ in arr)
+        user = User.objects.get(system_id_for_user=id)
 
         all_permissions = Permission.objects.all()
 
@@ -54,6 +58,7 @@ class WebPageView(APIView):
                 
                 data = {
                     'id':id,
+                    'user':user,
                     "permission":permission,
                     "all_permissions":all_permissions
                 }

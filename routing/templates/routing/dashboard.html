@@ -327,160 +327,6 @@
         <!--end::Body-->
       </div>
       <!--end::Nav Panel Widget 3-->
-
-      <!--begin::List Widget 9-->
-      <div class="card card-custom gutter-b">
-        <!--begin::Header-->
-        <div class="card-header align-items-center border-0 mt-4">
-          <h3 class="card-title align-items-start flex-column">
-            <span class="font-weight-bolder text-dark">Activities</span>
-            <span class="text-muted mt-3 font-weight-bold font-size-sm"
-              >890,344 Activities</span
-            >
-          </h3>
-          <div class="card-toolbar">
-            <div class="dropdown dropdown-inline">
-              <a
-                href="#"
-                class="btn btn-clean btn-hover-light-primary btn-sm btn-icon"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <i class="ki ki-bold-more-hor"></i>
-              </a>
-              <div class="dropdown-menu dropdown-menu-md dropdown-menu-right">
-                <!--begin::Navigation-->
-                <ul class="navi navi-hover">
-                  <li class="navi-header font-weight-bold py-4">
-                    <span class="font-size-lg">Choose Label:</span>
-                    <i
-                      class="flaticon2-information icon-md text-muted"
-                      data-toggle="tooltip"
-                      data-placement="right"
-                      title="Click to learn more..."
-                    ></i>
-                  </li>
-                  <li class="navi-separator mb-3 opacity-70"></li>
-                  <li class="navi-item">
-                    <a href="#" class="navi-link">
-                      <span class="navi-text">
-                        <span
-                          class="label label-xl label-inline label-light-success"
-                          >Customer</span
-                        >
-                      </span>
-                    </a>
-                  </li>
-                  <li class="navi-item">
-                    <a href="#" class="navi-link">
-                      <span class="navi-text">
-                        <span
-                          class="label label-xl label-inline label-light-danger"
-                          >Partner</span
-                        >
-                      </span>
-                    </a>
-                  </li>
-                  <li class="navi-item">
-                    <a href="#" class="navi-link">
-                      <span class="navi-text">
-                        <span
-                          class="label label-xl label-inline label-light-warning"
-                          >Suplier</span
-                        >
-                      </span>
-                    </a>
-                  </li>
-                  <li class="navi-item">
-                    <a href="#" class="navi-link">
-                      <span class="navi-text">
-                        <span
-                          class="label label-xl label-inline label-light-primary"
-                          >Member</span
-                        >
-                      </span>
-                    </a>
-                  </li>
-                  <li class="navi-item">
-                    <a href="#" class="navi-link">
-                      <span class="navi-text">
-                        <span
-                          class="label label-xl label-inline label-light-dark"
-                          >Staff</span
-                        >
-                      </span>
-                    </a>
-                  </li>
-                  <li class="navi-separator mt-3 opacity-70"></li>
-                  <li class="navi-footer py-4">
-                    <a class="btn btn-clean font-weight-bold btn-sm" href="#">
-                      <i class="ki ki-plus icon-sm"></i>Add new</a
-                    >
-                  </li>
-                </ul>
-                <!--end::Navigation-->
-              </div>
-            </div>
-          </div>
-        </div>
-        <!--end::Header-->
-        <!--begin::Body-->
-        <div class="card-body pt-4">
-          <!--begin::Timeline-->
-          <div class="timeline timeline-6 mt-3">
-            <!--begin::Item-->
-            <div class="timeline-item align-items-start">
-              <!--begin::Label-->
-              <div
-                class="timeline-label font-weight-bolder text-dark-75 font-size-lg"
-              >
-                08:42
-              </div>
-              <!--end::Label-->
-              <!--begin::Badge-->
-              <div class="timeline-badge">
-                <i class="fa fa-genderless text-warning icon-xl"></i>
-              </div>
-              <!--end::Badge-->
-              <!--begin::Text-->
-              <div
-                class="font-weight-mormal font-size-lg timeline-content text-muted pl-3"
-              >
-                Outlines keep you honest. And keep structure
-              </div>
-              <!--end::Text-->
-            </div>
-            <!--end::Item-->
-            <!--begin::Item-->
-            <div class="timeline-item align-items-start">
-              <!--begin::Label-->
-              <div
-                class="timeline-label font-weight-bolder text-dark-75 font-size-lg"
-              >
-                10:00
-              </div>
-              <!--end::Label-->
-              <!--begin::Badge-->
-              <div class="timeline-badge">
-                <i class="fa fa-genderless text-success icon-xl"></i>
-              </div>
-              <!--end::Badge-->
-              <!--begin::Content-->
-              <div class="timeline-content d-flex">
-                <span class="font-weight-bolder text-dark-75 pl-3 font-size-lg"
-                  >AEOL meeting</span
-                >
-              </div>
-              <!--end::Content-->
-            </div>
-            <!--end::Item-->
-          </div>
-          <!--end::Timeline-->
-        </div>
-        <!--end: Card Body-->
-      </div>
-      <!--end: List Widget 9-->
     </div>
     <!--end::Aside-->
     <!--begin::Content-->
@@ -503,6 +349,100 @@
     <!--end::Content-->
   </div>
   <!--end::Education-->
+</div>
+<div
+  class="modal fade"
+  id="constModal"
+  data-backdrop="static"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="staticBackdrop"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New Constituency</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <i aria-hidden="true" class="ki ki-close"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form" novalidate="novalidate" id="const_add_new">
+          <div class="form-group row">
+            <input type="hidden" id="countries" name="country" value="" />
+            <label class="col-lg-3 col-form-label" for="regions"
+              >Region: *</label
+            >
+            <div class="col-lg-6">
+              <select
+                class="form-control form-control-solid"
+                name="region"
+                id="regions"
+                disabled
+              ></select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-lg-3 col-form-label" for="constituencies"
+              >Constituency: *</label
+            >
+            <div class="col-lg-6">
+              <select
+                class="form-control form-control-solid"
+                name="constituency"
+                id="constituencies"
+                disabled
+              ></select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-lg-3 col-form-label" for="towns">Town: *</label>
+            <div class="col-lg-6">
+              <select
+                class="form-control form-control-solid"
+                name="town"
+                id="towns"
+                disabled
+              ></select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-lg-3 col-form-label" for="areas">Area: *</label>
+            <div class="col-lg-6">
+              <select
+                class="form-control form-control-solid"
+                name="area"
+                id="areas"
+                disabled
+              ></select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-light-primary font-weight-bold"
+          data-dismiss="modal"
+        >
+          Close
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary font-weight-bold"
+          id="add_const_new"
+        >
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 <script type="text/javascript">
   var getInitials = (string) => {
@@ -683,8 +623,8 @@
         });
       },
       success: function (data) {
-        console.log("mp_data", data);
         if (data.status === 200) {
+          $("#mps_name").text("MP: " + data.data[0]?.mp.full_name);
           var feeds = data.data;
           console.log("feed", feeds);
           var feed_data = $("#mp_feed_data");
@@ -868,9 +808,12 @@ ${
       },
     });
   };
+
   var active_const = $(".active_constituency");
   var regions = $("#regions"),
-    constituencies = $("#constituencies");
+    constituencies = $("#constituencies"),
+    towns = $("#towns"),
+    area = $("#areas");
 
   regions.select2({
     placeholder: "Select Region",
@@ -879,6 +822,12 @@ ${
     placeholder: "Select Constituency",
   });
 
+  towns.select2({
+    placeholder: "Select Town",
+  });
+  area.select2({
+    placeholder: "Select Area",
+  });
   var loadAddNew = () => {
     var countries = sessionStorage.getItem("countries");
     countries = JSON.parse(countries);
@@ -899,7 +848,18 @@ ${
   };
 
   regions.on("change", function (e) {
-    constituencies.attr("disabled", "disabled");
+    constituencies
+      .attr("disabled", "disabled")
+      .html("")
+      .select2({ data: [], placeholder: "Select Constituency" });
+    towns
+      .attr("disabled", "disabled")
+      .html("")
+      .select2({ data: [], placeholder: "Select Town" });
+    area
+      .attr("disabled", "disabled")
+      .html("")
+      .select2({ data: [], placeholder: "Select Area" });
     var reg_id = $(this).val();
     var country = sessionStorage.getItem("countries");
     country = JSON.parse(country);
@@ -921,30 +881,105 @@ ${
     });
     constituencies.removeAttr("disabled");
   });
+  constituencies.on("change", function (e) {
+    towns
+      .attr("disabled", "disabled")
+      .html("")
+      .select2({ data: [], placeholder: "Select Town" });
+    area
+      .attr("disabled", "disabled")
+      .html("")
+      .select2({ data: [], placeholder: "Select Area" });
+    var const_id = $(this).val();
+    var reg_id = $("#regions").val();
+    var count_id = $("#countries").val();
+    var country = sessionStorage.getItem("countries");
+    country = JSON.parse(country);
+
+    var region = country.filter((value, key) => value.id == count_id);
+
+    var constituency = region[0].regions.filter(
+      (value, key) => value.id == reg_id
+    );
+    var tns = [];
+
+    var town = constituency[0].constituencies.filter(
+      (value, key) => value.id == const_id
+    );
+    console.log("towns", town);
+
+    town[0].towns.forEach(({ id, name }, key) => {
+      tns.push({ id, text: name });
+    });
+
+    towns.html("").select2({
+      data: [{ id: "", text: "" }, ...tns],
+      placeholder: "Select Town",
+    });
+    towns.removeAttr("disabled");
+  });
+
+  towns.on("change", function (e) {
+    area
+      .attr("disabled", "disabled")
+      .html("")
+      .select2({ data: [], placeholder: "Select Area" });
+    var town_id = $(this).val();
+    var const_id = $("#constituencies").val();
+    var reg_id = $("#regions").val();
+    var count_id = $("#countries").val();
+    var country = sessionStorage.getItem("countries");
+    country = JSON.parse(country);
+
+    var region = country.filter((value, key) => value.id == count_id);
+
+    var constituency = region[0].regions.filter(
+      (value, key) => value.id == reg_id
+    );
+    var ars = [];
+
+    var town = constituency[0].constituencies.filter(
+      (value, key) => value.id == const_id
+    );
+
+    var areas = town[0].towns.filter((value, key) => value.id == town_id);
+    console.log("areas", areas);
+
+    areas[0].areas.forEach(({ id, name }, key) => {
+      ars.push({ id, text: name });
+    });
+
+    area.html("").select2({
+      data: [{ id: "", text: "" }, ...ars],
+      placeholder: "Select Area",
+    });
+    area.removeAttr("disabled");
+  });
 
   $.ajax({
     url: `http://localhost:8000/general/get-user-info/${user_details.system_id_for_user}/`,
     method: "GET",
     success: function (data) {
-      console.log("ddd", data);
+      console.log("userinfo", data);
+      $("#user_profile").css(
+        "background-image",
+        `url(${data.profile_picture})`
+      );
+      $("#countries").val(data.country);
       var const_list = $("#const_list");
       var constituencies = data.constituency;
       active_const.text(data.active_constituency.name);
       var add_new_const = $("#add_new_const");
+      add_new_const.show();
       fetchData();
-      if (!user_details.is_mp) {
-        add_new_const.show();
-
-        active_const.removeAttr("disabled");
-        if (constituencies.length > 1) {
-          add_new_const
-            .text("Max Limit Reached")
-            .attr("onclick", "return false;")
-            .removeAttr("data-target")
-            .removeAttr("data-toggle");
-        }
+      active_const.removeAttr("disabled");
+      if (constituencies.length > 1) {
+        add_new_const
+          .text("Max Limit Reached")
+          .attr("onclick", "return false;")
+          .removeAttr("data-target")
+          .removeAttr("data-toggle");
       }
-
       for (var con in constituencies) {
         console.log("const", constituencies[con]);
         const_list.append(
@@ -960,6 +995,8 @@ ${
     e.preventDefault();
     var region = $("#regions").val(),
       constituency = $("#constituencies").val(),
+      town = $("#towns").val(),
+      area = $("#areas").val(),
       sendBtn = KTUtil.getById("add_const_new"),
       _buttonSpinner = "spinner spinner-right spinner-white pr-15";
 
@@ -982,6 +1019,8 @@ ${
         system_id_for_user: user_details.system_id_for_user,
         region,
         constituency,
+        town,
+        area,
       },
       cache: false,
       processData: true,
@@ -1162,18 +1201,10 @@ ${
   });
 
   var loadChat = () => {
-    var user_identity = btoa(btoa(btoa("user_data")));
-
-    var user_data = sessionStorage.getItem(user_identity);
-
-    var user_details = atob(atob(atob(atob(user_data))));
-    user_details = JSON.parse(user_details);
-
     $.ajax({
       url: `http://localhost:8000/constituent-operations/retrieve-messages/${user_details.system_id_for_user}/`,
       method: "GET",
       success: function (data) {
-        console.log("messages", data);
         if (data.status === 200) {
           var messages = data.messages;
           var message_box = $(".messages");
@@ -1193,9 +1224,7 @@ ${
                         user_details.full_name
                       }</a>
 </div>
-<div class="symbol symbol-circle symbol-40 ml-3">
-<img alt="Pic" src="assets/media/users/300_21.jpg" />
-</div>
+
 </div>
 <div class="mt-2 rounded p-5 bg-light-primary text-dark-50 font-weight-bold font-size-lg text-right max-w-400px">${
                         messages[message].message
@@ -1205,12 +1234,10 @@ ${
                     : `
 <div class="d-flex flex-column mb-5 align-items-start">
 <div class="d-flex align-items-center">
-<div class="symbol symbol-circle symbol-40 mr-3">
-<img alt="Pic" src="assets/media/users/300_12.jpg" />
-</div>
+
 <div>
 <a href="#" class="text-dark-75 text-hover-primary font-weight-bold font-size-h6">${
-                        user_details.full_name
+                        messages[message].sender.full_name
                       }</a>
 <span class="text-muted font-size-sm">${moment(
                         messages[message].date_sent
@@ -1247,14 +1274,8 @@ ${
       },
     });
   };
-  // setInterval(loadChat, 2000)
+  setInterval(loadChat, 2000);
   $("#message-send").on("click", function (e) {
-    var user_identity = btoa(btoa(btoa("user_data")));
-
-    var user_data = sessionStorage.getItem(user_identity);
-
-    var user_details = atob(atob(atob(atob(user_data))));
-    user_details = JSON.parse(user_details);
     e.preventDefault();
     var message_body = $("#message_body_send").val(),
       sendBtn = KTUtil.getById("message-send"),
@@ -1284,7 +1305,6 @@ ${
       processData: true,
       dataType: "json",
       beforeSend: function () {
-        console.log("edn", endpoint);
         KTUtil.btnWait(sendBtn, _buttonSpinner, "Processing", true);
       },
       success: function (data) {
