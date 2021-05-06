@@ -139,7 +139,7 @@ class MPCreateApiView(CreateAPIView):
     serializer_class = MPRegisterSerializer
     permission_classes=()
 
-    def create(self, request):
+    def create(self, request, id):
         country = get_object_or_404(Country, id=request.data['country'])
         region = get_object_or_404(Region, id=request.data['region'])
         constituency = get_object_or_404(Constituency, id= request.data['constituency'])
@@ -211,10 +211,22 @@ class MPCreateApiView(CreateAPIView):
             )
 
             mp.save()
+            try:
+                const = Constituent.objects.get(user__system_id_for_user = id)
+                const.user.is_subadmin = True
+                const.subadmin_for = user
+                const.is_subadmin = True
+
+                const.save()
+            except Exception as e:
+                print(e)
+                pass
+
             
             return Response({
                 "status":status.HTTP_201_CREATED,
                 "message":"Account registration is successful. We will get in touch to get your account verified.",
+                "email": user.email
                 }, status=status.HTTP_201_CREATED)
    
 

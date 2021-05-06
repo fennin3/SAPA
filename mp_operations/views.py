@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from mp_operations.models import ActionPlanAreaSummaryForMp, Project, User
 from rest_framework.generics import CreateAPIView, ListAPIView
-from .serializers import CreateProjectSerializer, ListConstituentsSerializer, ListProjectSerializer, MPRetrieveAllSubAdminSerializer, RNRetrieveIncidentReportSerializer, RNRetrieveMessageSerializer, RetrieveActionPlanSummaryEachAreaForMPSerializer, SearchConstituentsSerialiser, SearchProjectsSerialiser, SendEmailSerializer, SendEmailToConstSerializer, SendMessageToConstituentSerializer, RNRetrieveRequestFormSerializer
+from .serializers import CreateProjectSerializer, ListConstituentsSerializer, ListProjectSerializer, \
+    MPRetrieveAllSubAdminSerializer, RNRetrieveIncidentReportSerializer, RNRetrieveMessageSerializer, \
+    RetrieveActionPlanSummaryEachAreaForMPSerializer, SearchConstituentsSerialiser, SearchProjectsSerialiser, \
+    SendEmailSerializer, SendEmailToConstSerializer, SendMessageToConstituentSerializer, \
+    RNRetrieveRequestFormSerializer, UserSerializer, PermissionSerializer
 from users.models import Constituency, Constituent, Country, Town, Area, SubAdminPermission, Region, MpProfile, OTPCode, Permission, UserPermissionCust
 from rest_framework import status
 from django.core.mail import EmailMessage
@@ -752,14 +756,21 @@ class SetPermissionsForSubAdmin(APIView):
     permission_classes=()
 
     def post(self, request, id):
-        perm_name=request.data['perm_name']
-        perm_value=request.data['perm_value']
+        data = PermissionSerializer(request.data).data
+        perm_name = data['perm_name']
+        perm_value = data['perm_value']
         user = User.objects.get(system_id_for_user=id)
 
         perm = UserPermissionCust.objects.get(user=user, permission_name=perm_name)
 
 
         perm.permission_value = perm_value
+
+        data = {
+            "status":status.HTTP_200_OK,
+            "message":f"{perm_name} status changed to {perm_value}"
+        }
+        return Response (data,status=status.HTTP_200_OK)
 
         
 
@@ -770,3 +781,13 @@ class RetrievePermissionsOfSubAdmin(APIView):
     permission_classes=()          
 
 
+class AllUsersInACountry(APIView):
+    permission_classes = ()
+
+    def get(self, request, country):
+        users = User.objects.filter(country=country)
+        data = UserSerializer(users, many=True)
+        return Response ({
+            "status":status.HTTP_200_OK,
+            "data":data.data
+        }, status=status.HTTP_200_OK)

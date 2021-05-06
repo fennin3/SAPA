@@ -25,6 +25,10 @@ class SubAdminPermissionSerializer(serializers.ModelSerializer):
         model=SubAdminPermission
         exclude = ['sub_admin']
 
+class PermissionSerializer(serializers.Serializer):
+    perm_name = serializers.CharField(max_length=20)
+    perm_value = serializers.BooleanField()
+
 class TownSerializer(serializers.ModelSerializer):
     class Meta:
         model=Town
