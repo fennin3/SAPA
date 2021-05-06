@@ -1,12 +1,29 @@
 <div class="container">
   <div class="card card-custom">
     <div class="card-header">
-      <div class="card-title">Add Medical Center User</div>
+      <div class="card-title">Create Account for users</div>
     </div>
 
-     <form class="form" id="add_medical_user_form">
+     <form class="form" id="add_account_form">
           <div class="card-body">
             <div class="mb-15">
+              <div class="form-group row">
+                <label class="col-lg-3 col-form-label" for="type">Account Type: *</label>
+                <div class="col-lg-6">
+                 <select
+          class="form-control form-control-solid selectpicker"
+          id="type"
+          name="type"
+          >
+          <option disabled selected hidden >Select account type</option>
+          <option value="security">Security</option>
+          <option value="subadmin">Sub Admin</option>
+          <option value="medical_center">Medical Center</option>
+          <option value="assemblyman">Assemblyman</option>
+        </select>
+         <span class="form-text text-muted">Please select account type</span>
+                </div>
+              </div>
               <div class="form-group row">
                 <label class="col-lg-3 col-form-label" for="full_name">Full Name: *</label>
                 <div class="col-lg-6">
@@ -108,7 +125,7 @@
                 </div>
               </div>
               <div class="form-group d-flex flex-wrap flex-center">
-                  <button type="button" id="add_medical_user" class="btn btn-primary font-weight-bold px-9 py-4 my-3 mx-4">Submit</button>
+                  <button type="button" id="add_account" class="btn btn-primary font-weight-bold px-9 py-4 my-3 mx-4">Submit</button>
                 </div>
             </div>
           </div>
@@ -263,7 +280,7 @@ regions.on('change',function (e){
       });
 
     var validation;
-        var form = KTUtil.getById('add_medical_user_form');
+        var form = KTUtil.getById('add_account_form');
 
         validation = FormValidation.formValidation(
          form,
@@ -273,6 +290,13 @@ regions.on('change',function (e){
                   validators: {
                      notEmpty: {
                         message: 'Full Name is required'
+                    }
+                }
+            },
+                  type: {
+                  validators: {
+                     notEmpty: {
+                        message: 'Select an account type'
                     }
                 }
             },
@@ -379,14 +403,16 @@ regions.on('change',function (e){
 }
 );
 
-        $('#add_medical_user').on('click', function (e) {
+        $('#add_account').on('click', function (e) {
             e.preventDefault();
 
             validation.validate().then(function(status) {
+
               if (status == 'Valid') {
-                  var endpoint = `http://localhost:8000/mp-operations/create-account-for-others/${user_details.system_id_for_user}/medical_center/`;
+                   var ac_type = $("#type").val().toLowerCase();
+                  var endpoint = `http://localhost:8000/mp-operations/create-account-for-others/${user_details.system_id_for_user}/${ac_type}/`;
                  
-                var $this = $('#add_medical_user_form'),  signUpBtn = KTUtil.getById('add_medical_user'), _buttonSpinner= 'spinner spinner-right spinner-white pr-15';
+                var $this = $('#add_account_form'),  signUpBtn = KTUtil.getById('add_account'), _buttonSpinner= 'spinner spinner-right spinner-white pr-15';
                 $.ajax({
                     url: endpoint,
                     type: "POST",
@@ -412,6 +438,9 @@ regions.on('change',function (e){
                                 }
                             }).then(()=> {
                                 KTUtil.btnRelease(signUpBtn);$this.trigger('reset');
+                                if (ac_type === 'subadmin') {
+                                    history.pushState(null,null,'view-admins');
+                                }
                               
                             });
 

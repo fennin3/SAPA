@@ -31,7 +31,7 @@ arr = [
     'get_permissions',
     'action-mp',
     'add-admin',
-    'medical-center'
+    'accounts'
 ]
 
 

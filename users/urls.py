@@ -6,7 +6,7 @@ from . import tempview
 urlpatterns = [
     # Login - Register
     path("create-constituent-account/", views.ConstituentCreateApiView.as_view(), name="createconstituent"),
-    path("create-mp-account/", views.MPCreateApiView.as_view(), name="createmp"),
+    path("create-mp-account/<id>/", views.MPCreateApiView.as_view(), name="createmp"),
     path("create-secondary-account/", views.SecondaryRegistration.as_view(), name="secondary_create"),
 
     # Listing 

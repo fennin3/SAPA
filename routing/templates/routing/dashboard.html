@@ -649,7 +649,9 @@
 <a href="#" class="text-dark-75 text-hover-primary mb-1 font-size-lg font-weight-bolder">${
                   feeds[feed].name
                 }</a>
-<span class="text-muted font-weight-bold">${feeds[feed].place}</span>
+<span class="text-muted font-weight-bold">${feeds[feed].place} - ${moment(
+                        feeds[feed].date_posted
+                      ).fromNow()}</span>
 </div></div><div class="pt-4">${
                   feeds[feed].media === null
                     ? ""
