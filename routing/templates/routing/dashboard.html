@@ -958,22 +958,18 @@ ${
     area.removeAttr("disabled");
   });
 
-  $.ajax({
-    url: `http://localhost:8000/general/get-user-info/${user_details.system_id_for_user}/`,
-    method: "GET",
-    success: function (data) {
-      console.log("userinfo", data);
-      $("#user_profile").css(
+   $("#user_profile").css(
         "background-image",
-        `url(${data.profile_picture})`
+        `url(${user_details.profile_picture})`
       );
-      $("#countries").val(data.country);
-      var const_list = $("#const_list");
-      var constituencies = data.constituency;
-      active_const.text(data.active_constituency.name);
-      var add_new_const = $("#add_new_const");
+     $("#countries").val(user_details.country);
+       var const_list = $("#const_list");
+      var constituencies = user_details.constituency;
+      active_const.text(user_details.active_constituency.name);
+       var add_new_const = $("#add_new_const");
       add_new_const.show();
-      fetchData();
+
+       fetchData();
       active_const.removeAttr("disabled");
       if (constituencies.length > 1) {
         add_new_const
@@ -988,11 +984,8 @@ ${
           `<li class="navi-item"><a href="javascript:void(0)" data-id="${constituencies[con].id}"  onclick="constChange(this)" class="navi-link"><span class="navi-text">${constituencies[con].name}</span></a></li>`
         );
       }
-    },
-    error: function (error) {
-      console.log("error", error);
-    },
-  });
+
+
   $("#add_const_new").on("click", function (e) {
     e.preventDefault();
     var region = $("#regions").val(),
@@ -1276,7 +1269,7 @@ ${
       },
     });
   };
-  setInterval(loadChat, 2000);
+  //setInterval(loadChat, 2000);
   $("#message-send").on("click", function (e) {
     e.preventDefault();
     var message_body = $("#message_body_send").val(),

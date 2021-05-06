@@ -756,11 +756,14 @@ class SetPermissionsForSubAdmin(APIView):
     permission_classes=()
 
     def post(self, request, id):
+
         data = PermissionSerializer(request.data).data
         perm_name = data['perm_name']
         perm_value = data['perm_value']
         user = User.objects.get(system_id_for_user=id)
-
+        print("-------------------------------")
+        print(perm_name)
+        print("-------------------------------")
         perm = UserPermissionCust.objects.get(user=user, permission_name=perm_name)
 
 

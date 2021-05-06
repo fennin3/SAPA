@@ -49,7 +49,7 @@ class WebPageView(APIView):
         try:
             permission = UserPermissionCust.objects.filter(user__system_id_for_user=id)
         except Exception as e:
-            permission = "hhh"
+            permission = "null"
 
         if call_ in arr:
 
