@@ -1,0 +1,185 @@
+<div class="container">
+  
+    <div class="card card-custom gutter-b" >
+       <div class="card-header border-0 bg-primary py-5">
+      <h3 class="card-title font-weight-bolder text-white">Action Plan</h3>
+      <div class="card-toolbar">
+        <div class="dropdown dropdown-inline">
+          <a
+            href="#"
+            class="btn btn-transparent-white btn-sm font-weight-bolder dropdown-toggle px-5"
+            id="current_year"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          ></a>
+          <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+            <!--begin::Navigation-->
+            <ul class="navi navi-hover" id="year_holder"></ul>
+            <!--end::Navigation-->
+          </div>
+        </div>
+      </div>
+    </div>
+     
+      <div class="card-body" >
+        <div class="row"id="chart_card" >
+        </div>
+    
+ 
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+ var current_date = new Date();
+ var year = current_date.getFullYear();
+
+$("#current_year").text( current_date.getFullYear());
+ $.get(
+    "http://localhost:8000/constituent-operations/retrieve-years/",
+    function (data) {
+      console.log("datayears", data);
+      if (data.status === 200) {
+        var years = data.years,
+          year_holder = $("#year_holder");
+
+        if (years.length > 0) {
+          year_holder.html("");
+
+          for (let year in years) {
+            year_holder.append(`
+
+            <li class="navi-item">
+            <a href="#" class="navi-link" onclick="changeYear(this)" data-year="${years[year]}">
+
+            <span class="navi-text">${years[year]}</span>
+            </a>
+            </li>`);
+          }
+        }
+      }
+    }
+  );
+
+  var changeYear = ($this) => {
+    var new_date = $($this).data("year");
+
+    showActionPlan(new_date);
+  };
+
+ function showActionPlan(year) {
+   $.ajax({
+    url: `http://localhost:8000/mp-operations/retrieve-action-plans-summary/${user_details.system_id_for_user}/${year}/`,
+    method: "GET",
+    cache: false,
+    dataType: "json",
+    beforeSend: function () {
+
+      KTApp.block('#chart_card', {
+        overlayColor: 'blue',
+        opacity: 0.1,
+        state: 'primary' 
+      });
+    },
+    success: function (data) {
+      console.log("chart data", data);
+
+      if (data.status === 200) {
+
+        if (data.data.length >  0) {
+            $("#chart_card").html('');
+          for (let d in data.data) {
+             $("#chart_card").append(`
+              <div class="col-lg-4 col-sm-6">
+             <div class="d-flex justify-content-between flex-column h-100">
+         
+          <div class="h-100">
+           
+            <div class="d-flex flex-column flex-center">
+             
+              <div
+              class="bgi-no-repeat bgi-size-cover rounded min-h-180px w-100"
+              style="
+              background-image: url(${data.data[d].image});
+              "
+              ></div>
+             
+             
+              <a
+              href="#"
+              class="card-title font-weight-bolder text-dark-75 text-hover-primary font-size-h4 m-0 pt-7 pb-1"
+              >${data.data[d].area.name.toUpperCase()}</a>
+             
+             
+              <div class="font-weight-bold text-dark-50 font-size-sm pb-7">
+               ${data.data[d].date}
+              </div>
+             
+            </div>
+           
+          </div>
+         
+         
+          <div
+          class="d-flex flex-center"
+          id="kt_sticky_toolbar_chat_toggler_2"
+          data-toggle="tooltip"
+          title=""
+          data-placement="right"
+          data-original-title="Share Post"
+          >
+          <button
+          class="btn btn-primary font-weight-bolder font-size-sm py-3 px-14"
+          >
+          Share as post
+        </button>
+      </div>
+     
+    </div>
+</div>
+            `)
+
+          }
+        
+
+          
+        }else {
+          $("#chart_card").html(`
+              <div class="d-flex justify-content-between flex-column h-100">
+                <p>No Action plan has been submitted for this year </p>
+              </div>
+            `);
+        }
+     
+      } else {
+        swal.fire({
+          text: data.message,
+          icon: "error",
+          buttonsStyling: false,
+          confirmButtonText: "Ok, got it!",
+          customClass: {
+            confirmButton: "btn font-weight-bold btn-light-danger",
+          },
+        });
+      }
+
+      KTApp.unblock("#chart_card");
+    },
+    error: function (error) {
+      console.log("error", error);
+      swal.fire({
+        text: `An error occurred and that is all we know`,
+        icon: "error",
+        buttonsStyling: false,
+        confirmButtonText: "Ok, got it!",
+        customClass: {
+          confirmButton: "btn font-weight-bold btn-light-danger",
+        },
+      });
+      KTApp.unblock("#chart_card");
+    },
+  });
+ }
+ showActionPlan(year);
+</script>

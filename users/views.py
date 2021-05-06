@@ -1,7 +1,7 @@
 from constituent_operations.serializers import ConstituencySerializer
 from users.utils import generate_OTP, generate_userID, send_sms, sending_mail
 from rest_framework import permissions
-from users.models import Area, Constituency, Constituent, Country, MpProfile, OTPCode, Region, Town
+from users.models import Area, Constituency, Constituent, Country, MpProfile, OTPCode, Region, Town, Permission, UserPermissionCust
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
@@ -109,6 +109,16 @@ class ConstituentCreateApiView(CreateAPIView):
                 constituent.area.add(area)
 
                 constituent.save()
+
+                permissions = Permission.objects.all()
+
+                for perm in permissions:
+                    user_perm = UserPermissionCust.objects.create(
+                        user=user,
+                        permission_name=perm.name
+                    )
+
+                    user_perm.save()
 
                 return Response({
                 "status":status.HTTP_201_CREATED,
