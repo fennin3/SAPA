@@ -1,0 +1,29 @@
+<form method="POST" class="permissionForm">
+  {% for i in all_permissions %} 
+  <div class="form-group row">
+    <label class="col-form-label text-right col-lg-3 col-sm-12">
+      {{i.name}}</label
+    >
+    <div class="col-lg-9 col-md-9 col-sm-12">
+      <input
+        data-switch="true"
+        type="checkbox"
+        {% for p in permission %}
+        {% if p.permission_name == i.name %}
+        checked="True"
+        {% endif %}
+        {% endfor %}
+        data-on-text="True"
+        data-handle-width="50"
+        data-off-text="False"
+        data-on-color="success"
+      />
+    </div>
+  </div>
+  {% endfor %}
+</form>
+
+<script>
+  $("[data-switch=true]").bootstrapSwitch();
+  $('.permission-title').text('{{ user.full_name }}\'s Permissions')
+</script>
