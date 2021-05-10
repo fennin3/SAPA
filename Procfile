@@ -1,1 +1,1 @@
-web: gunicorn SAPA-main.wsgi
+web: gunicorn SAPA.wsgi
