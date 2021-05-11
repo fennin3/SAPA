@@ -443,7 +443,6 @@ class ActionPlanView(APIView):
 
 
         for prob in problem_titles:
-
             try:
                 act_plan = ActionPlanToAssemblyMan.objects.get(area=area,problem_title=prob, constituency=constituency, date__year=year)
                 if user in act_plan.participants.all():

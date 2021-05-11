@@ -756,7 +756,7 @@ class CreateUserAccountForOtherView(CreateAPIView):
 class SetPermissionsForSubAdmin(APIView):
     permission_classes=()
 
-    def post(self, request, id, subadmin_id):
+    def post(self, request, subadmin_id):
         data = PermissionSerializer(request.data).data
         perm_name = data['perm_name']
         perm_value = data['perm_value']
