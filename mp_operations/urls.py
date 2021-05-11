@@ -44,7 +44,7 @@ urlpatterns = [
 
 
     # Setting permissions
-    path("set-permission/<id>/<subadmin_id>/", SetPermissionsForSubAdmin.as_view(), name="set_permission"),
+    path("set-permission/<subadmin_id>/", SetPermissionsForSubAdmin.as_view(), name="set_permission"),
     path("get-users-in-country/<country>/", AllUsersInACountry.as_view(), name="users")
     
 ] 
