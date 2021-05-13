@@ -95,10 +95,6 @@ class ListAreaView(ListAPIView):
         )
 
 
-
-
-
-
 class SendMessageMPView(APIView):
     permission_classes = ()
     def post(self, request):
@@ -130,6 +126,7 @@ class SendMessageMPView(APIView):
             } 
 
         return Response(response, status=status.HTTP_200_OK)     
+
 
 class EditProfileView(APIView):
     permission_classes =()
@@ -164,6 +161,7 @@ class EditProfileView(APIView):
                 # "pic":user.profile_picture
             }
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 

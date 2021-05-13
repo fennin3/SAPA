@@ -16,7 +16,7 @@ import os
 from .models import RequestForm, ActionPlanToAssemblyMan, IncidentReport, Message, ProblemsForActionPlan, ApprovedActionPlan, ActionPlanParticipants
 from io import BytesIO
 from django.db.models import  Sum
-from rest_framework.pagination import PageNumberPagination
+import requests
 
 
 
@@ -542,7 +542,10 @@ class ApproveActionPlanView(APIView):
             figure = BytesIO()
             
             plt.bar(x, y)
+            plt.xlabel = x
+            plt.ylabel = y
             plt.savefig(figure)
+            
 
             content_file = ContentFile(figure.getvalue())
 
@@ -588,7 +591,8 @@ class RetrieveProblemTitlesView(APIView):
         }
 
         return Response(data, status=status.HTTP_200_OK)
-        
+
+
 class RetrieveYearsView(APIView):
     permission_classes=()
 
@@ -717,7 +721,12 @@ class ReplyNotification(APIView):
             }
         )
 
-        
+
+
+
+
+
+
 
 
 
