@@ -29,9 +29,9 @@ User = get_user_model()
 # path_ = os.getcwd()
 
 acp_values = {
-    "one":1,
+    "one":3,
     "two":2,
-    "three":3
+    "three":1
 }
 
 
