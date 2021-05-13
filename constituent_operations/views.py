@@ -16,6 +16,7 @@ import os
 from .models import RequestForm, ActionPlanToAssemblyMan, IncidentReport, Message, ProblemsForActionPlan, ApprovedActionPlan, ActionPlanParticipants
 from io import BytesIO
 from django.db.models import  Sum
+from rest_framework.pagination import PageNumberPagination
 
 
 
@@ -115,15 +116,20 @@ class RetrieveProjectsView(APIView):
             
             if len(projects)>0:
                 projects = list(reversed(projects))
+                paginator = PageNumberPagination()
+                paginator.page_size = 1
+                projects = paginator.paginate_queryset(projects, request)
                 data = ListProjectsOfMPs(data=projects, many=True)
 
                 data.is_valid(raise_exception=False)
 
-                return Response({
+                return paginator.get_paginated_response(data.data)
+
+                # return Response({
                 
-                    "status":status.HTTP_200_OK,
-                    "data":data.data
-                    }, status=status.HTTP_200_OK)
+                #     "status":status.HTTP_200_OK,
+                #     "data":data.data
+                #     }, status=status.HTTP_200_OK)
             else:
                 data = []
             return Response({
@@ -640,6 +646,7 @@ class GetActionPlanApprovedStatusView(APIView):
 
     def get(self, request, id, year):
         user = User.objects.get(system_id_for_user=id)
+        print("&&&&&&&&&&&&&&&&&&")
 
         try:
             approved = ApprovedActionPlan.objects.get(user=user, year=year)
