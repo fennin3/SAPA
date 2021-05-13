@@ -23,6 +23,7 @@ class Project(models.Model):
     comments = models.ManyToManyField(Comment, blank=True, null=True, related_name="project")
     likes = models.ManyToManyField(User,related_name="likes", null=True, blank=True)
     date_posted = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    is_post = models.BooleanField(default=False)
 
 
     def __str__(self):
