@@ -15,3 +15,10 @@ class CountryCustomisedForEmma(serializers.ModelSerializer):
         model=Country
         fields=['id','name']
 
+
+
+class CountryCustomisedForEmma(serializers.ModelSerializer):
+    class Meta:
+        model=Country
+        fields=['id','name']
+
