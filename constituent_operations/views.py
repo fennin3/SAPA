@@ -444,6 +444,17 @@ class ActionPlanView(APIView):
 
         ap = ProblemsForActionPlan.objects.all()
 
+       
+
+
+        # for i in ap:
+        #     problem_titles.append(i.title)
+
+        
+
+
+        a = []
+        
         try:
             ac_p = ActionPlanParticipants.objects.get(year=year,user=user)
 
