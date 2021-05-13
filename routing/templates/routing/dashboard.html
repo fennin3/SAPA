@@ -32,9 +32,7 @@
                 <!--end::Text-->
               </div>
               <!--end::Header-->
-              <!--begin::Body-->
-              
-              <!--end::Body-->
+
             </div>
             <!--eng::Container-->
             <!--begin::Footer-->
@@ -51,7 +49,7 @@
                 data-toggle="modal"
                 data-target="#kt_chat_modal"
               >
-                Contact MP
+                Chat MP
               </button>
             </div>
             <!--end::Footer-->
@@ -179,7 +177,7 @@
   </div>
 </div>
 <script type="text/javascript">
-  if(user_details.is_mp){ $("#kt_sticky_toolbar_chat_toggler_2").remove();}
+   if(user_details.is_mp){ $("#kt_sticky_toolbar_chat_toggler_2").remove();}
   var getInitials = (string) => {
     var names = string.split(" "),
       initials = names[0].substring(0, 1).toUpperCase();
@@ -190,21 +188,10 @@
     return initials;
   };
 
-  var user_status = "";
-  if (!user_details.is_mp) {
-    user_status = "Constituent";
-    $("#mp_entry").hide();
-  } else {
-    user_status = "MP";
-  }
 
-  $(".user_name").text(user_details.full_name);
-  $(".user_status").text(user_status);
-  $(".user_email").text(user_details.email);
-  $(".user_initials").text(getInitials(user_details.full_name));
 
   $.get(
-    "https://nsrohub.herokuapp.com/general/get-actionplan-status/",
+    "http://localhost:8000/general/get-actionplan-status/",
     function (data) {
       console.log("data", data);
 
@@ -220,54 +207,42 @@
 
   var fetchActions = () => {
     $.get(
-      "https://nsrohub.herokuapp.com/constituent-operations/action-titles/",
+      "http://localhost:8000/constituent-operations/action-titles/",
       function (data) {
         console.log("actions", data);
         if (data.status === 200) {
           var actions = data.data;
 
-          var action_form = $("#action_form");
-          action_form.html("");
+          var int_one = $("#one"), int_two = $("#two"), int_three = $("#three");
+          int_one.html('<option value="" hidden disabled selected>Select Project</option>'); int_two.html('<option value="" hidden disabled selected>Select Project</option>'); int_three.html('<option value="" hidden disabled selected>Select Project</option>');
           for (var action in actions) {
-            action_form.append(`
-							<div class="form-group row">
-								<label class="col-3 col-form-label">${actions[action].title}</label>
-								<div class="col-9 col-form-label">
-									<div class="radio-inline">
-										<label class="radio radio-primary">
-											<input type="radio" name="${actions[action].title}" value="1"/>
-											<span></span>
-											1
-										</label>
-										<label class="radio radio-primary">
-											<input type="radio" name="${actions[action].title}" value="2"/>
-											<span></span>
-											2
-										</label>
-										<label class="radio radio-primary">
-											<input type="radio" name="${actions[action].title}" value="3"/>
-											<span></span>
-											3
-										</label>
-										<label class="radio radio-primary">
-											<input type="radio" name="${actions[action].title}" value="4"/>
-											<span></span>
-											4
-										</label>
-										<label class="radio radio-primary">
-											<input type="radio" name="${actions[action].title}" value="5"/>
-											<span></span>
-											5
-										</label>
-									</div>
-									<span class="form-text text-muted">Rate from lowest to highest</span>
-								</div>
-							</div>`);
+            int_one.append(` <option value="${actions[action].title}">${actions[action].title}</option>`);
+            int_two.append(` <option value="${actions[action].title}">${actions[action].title}</option>`);
+            int_three.append(` <option value="${actions[action].title}">${actions[action].title}</option>`);
           }
         }
       }
     );
   };
+$("#one").on('change',function () {
+    var cur_val_one = this.value;
+     $("#two").children().each(function (e){
+          $(this).removeAttr('hidden');
+           if ($(this).val()===cur_val_one) {
+               $(this).attr('hidden',true);
+           }
+       });
+});
+$("#two").on('change',function () {
+    var cur_val_two = this.value;
+     $("#three").children().each(function (e){
+          $(this).removeAttr('hidden');
+           if ($(this).val()===cur_val_two) {
+               $(this).attr('hidden',true);
+           }
+       });
+});
+
 
   $("#send_action_data").on("click", function (e) {
     e.preventDefault();
@@ -277,7 +252,7 @@
     var actionBtn = KTUtil.getById("send_action_data"),
       _buttonSpinner = "spinner spinner-right spinner-white pr-15";
 
-    var endp = `https://nsrohub.herokuapp.com/constituent-operations/send-action-plan/${user_details.system_id_for_user}/`;
+    var endp = `http://localhost:8000/constituent-operations/send-action-plan/${user_details.system_id_for_user}/`;
 
     $.ajax({
       url: endp,
@@ -344,7 +319,7 @@
   });
 
   var fetchData = () => {
-    var endpoint = `https://nsrohub.herokuapp.com/constituent-operations/retrieve-projects/${user_details.system_id_for_user}/`;
+    var endpoint = `http://localhost:8000/constituent-operations/retrieve-projects/${user_details.system_id_for_user}/`;
 
     $.ajax({
       url: endpoint,
@@ -488,7 +463,7 @@ ${
   var constChange = ($this) => {
     var const_id = $($this).data("id");
 
-    var endpoint = `https://nsrohub.herokuapp.com/constituent-operations/switch-active-constituency/${user_details.system_id_for_user}/${const_id}/`;
+    var endpoint = `http://localhost:8000/constituent-operations/switch-active-constituency/${user_details.system_id_for_user}/${const_id}/`;
 
     $.ajax({
       url: endpoint,
@@ -693,22 +668,18 @@ ${
     area.removeAttr("disabled");
   });
 
-  $.ajax({
-    url: `https://nsrohub.herokuapp.com/general/get-user-info/${user_details.system_id_for_user}/`,
-    method: "GET",
-    success: function (data) {
-      console.log("userinfo", data);
-      $("#user_profile").css(
+   $("#user_profile").css(
         "background-image",
-        `url(${data.profile_picture})`
+        `url(${user_details.profile_picture})`
       );
-      $("#countries").val(data.country);
-      var const_list = $("#const_list");
-      var constituencies = data.constituency;
-      active_const.text(data.active_constituency.name);
-      var add_new_const = $("#add_new_const");
+     $("#countries").val(user_details.country);
+       var const_list = $("#const_list");
+      var constituencies = user_details.constituency;
+      active_const.text(user_details.active_constituency.name);
+       var add_new_const = $("#add_new_const");
       add_new_const.show();
-      fetchData();
+
+       fetchData();
       active_const.removeAttr("disabled");
       if (constituencies.length > 1) {
         add_new_const
@@ -723,11 +694,8 @@ ${
           `<li class="navi-item"><a href="javascript:void(0)" data-id="${constituencies[con].id}"  onclick="constChange(this)" class="navi-link"><span class="navi-text">${constituencies[con].name}</span></a></li>`
         );
       }
-    },
-    error: function (error) {
-      console.log("error", error);
-    },
-  });
+
+
   $("#add_const_new").on("click", function (e) {
     e.preventDefault();
     var region = $("#regions").val(),
@@ -748,7 +716,7 @@ ${
         },
       });
     }
-    var endpoint = `https://nsrohub.herokuapp.com/users/create-secondary-account/`;
+    var endpoint = `http://localhost:8000/users/create-secondary-account/`;
     $.ajax({
       url: endpoint,
       method: "PUT",
@@ -825,7 +793,7 @@ ${
         },
       });
     }
-    var endpoint = `https://nsrohub.herokuapp.com/constituent-operations/comment-on-post/`;
+    var endpoint = `http://localhost:8000/constituent-operations/comment-on-post/`;
     $.ajax({
       url: endpoint,
       method: "PUT",
@@ -893,7 +861,7 @@ ${
   var sendLike = ($this) => {
     var like = $($this);
     var project_id = $($this).data("id");
-    var endpoint = `https://nsrohub.herokuapp.com/constituent-operations/like-project/${user_details.system_id_for_user}/${project_id}/`;
+    var endpoint = `http://localhost:8000/constituent-operations/like-project/${user_details.system_id_for_user}/${project_id}/`;
 
     var curVal = like.find("span.like_num").text();
 
@@ -939,7 +907,7 @@ ${
 
   var loadChat = () => {
     $.ajax({
-      url: `https://nsrohub.herokuapp.com/constituent-operations/retrieve-messages/${user_details.system_id_for_user}/`,
+      url: `http://localhost:8000/constituent-operations/retrieve-messages/${user_details.system_id_for_user}/`,
       method: "GET",
       success: function (data) {
         if (data.status === 200) {
@@ -1029,7 +997,7 @@ ${
         },
       });
     }
-    var endpoint = `https://nsrohub.herokuapp.com/constituent-operations/send-message/`;
+    var endpoint = `http://localhost:8000/constituent-operations/send-message/`;
     $.ajax({
       url: endpoint,
       method: "POST",

@@ -37,7 +37,7 @@
 
 $("#current_year").text( current_date.getFullYear());
  $.get(
-    "https://nsrohub.herokuapp.com/constituent-operations/retrieve-years/",
+    "http://localhost:8000/constituent-operations/retrieve-years/",
     function (data) {
       console.log("datayears", data);
       if (data.status === 200) {
@@ -70,7 +70,7 @@ $("#current_year").text( current_date.getFullYear());
 
  function showActionPlan(year) {
    $.ajax({
-    url: `https://nsrohub.herokuapp.com/mp-operations/retrieve-action-plans-summary/${user_details.system_id_for_user}/${year}/`,
+    url: `http://localhost:8000/mp-operations/retrieve-action-plans-summary/${user_details.system_id_for_user}/${year}/`,
     method: "GET",
     cache: false,
     dataType: "json",
@@ -111,7 +111,7 @@ $("#current_year").text( current_date.getFullYear());
               class="card-title font-weight-bolder text-dark-75 text-hover-primary font-size-h4 m-0 pt-7 pb-1"
               >${data.data[d].area.name.toUpperCase()}</a>
              
-             
+             <div class="font-weight-bold text-dark-50 font-size-sm pb-7">${data.data[d].comment}</div>
               <div class="font-weight-bold text-dark-50 font-size-sm pb-7">
                ${data.data[d].date}
               </div>

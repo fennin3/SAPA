@@ -26,7 +26,13 @@ year  = datetime.today().year
 
 
 User = get_user_model()
-path_ = os.getcwd()
+# path_ = os.getcwd()
+
+acp_values = {
+    "one":1,
+    "two":2,
+    "three":3
+}
 
 
 
@@ -483,7 +489,7 @@ class ActionPlanView(APIView):
             except Exception as e:
                 act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=prob, constituency=constituency)
                 act_plan.total_participants = int(act_plan.total_participants) + 1
-                act_plan.total_rating = act_plan.total_rating + int(request.data[prob])
+                act_plan.total_rating = act_plan.total_rating + int(acp_values[request.data[prob]])
                 act_plan.save()
                 act_plan.participants.add(user)
 
