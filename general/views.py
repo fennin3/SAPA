@@ -1,12 +1,37 @@
-from general.serializers import ProfileEditConstituentSerializer
+from general.serializers import ProfileEditConstituentSerializer, CountryCustomisedForEmma
 from rest_framework import status
 from rest_framework.response import Response
 from constituent_operations.models import Message
 from constituent_operations.serializers import SendMessageSerializer
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
+from rest_framework.generics import ListAPIView
+from users.models import Country
+from rest_framework import  status
+
+
 
 User = get_user_model()
+
+
+
+class ListCountriesView(ListAPIView):
+    permission_classes=()
+    serializer_class=CountryCustomisedForEmma
+    queryset=Country.objects.all()
+
+    def list(self, request):
+        countries = Country.objects.all()
+
+        data = CountryCustomisedForEmma(countries, many=True)
+
+        return Response({
+            "status":status.HTTP_200_OK,
+            "countries":data.data}, status=status.HTTP_200_OK
+        )
+
+
+
 
 
 
