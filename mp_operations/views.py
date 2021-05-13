@@ -823,9 +823,9 @@ class ShareAsPostView(APIView):
         user = User.objects.get(system_id_for_user=id)
 
 
-        area = request.data['data']['area']['name']
+        area = request.data['area']
 
-        image = requests.get(request.data['data']['image']).content
+        image = requests.get(request.data['image']).content
 
         title = f"{area} Action Plan Summary"
 
@@ -852,6 +852,45 @@ class ShareAsPostView(APIView):
         }
 
         return Response(data,status=status.HTTP_200_OK)
+
+
+class ShareAllAtOnce(APIView):
+    permission_classes=()
+
+    def post(self, request, id):
+        user = User.objects.get(system_id_for_user=id)
+
+        for action_plan in request.data['data']:
+            area = action_plan['area']
+
+            image = requests.get(action_plan['image']).content
+
+            title = f"{area} Action Plan Summary"
+
+            # comment = request.data['comment']
+
+            image = ContentFile(image)
+
+            project = Project.objects.create(
+                mp = user,
+                name = title,
+                # description = ,
+                place = area,
+                is_post=True
+            )
+
+            project.media.save("shared_data.jpg", image)
+
+            project.save()
+
+
+        data = {
+            "status":status.HTTP_200_OK,
+            "message":f"Action Plan Summaries has been shared."
+        }
+
+        return Response(data,status=status.HTTP_200_OK)
+
 
 
 
