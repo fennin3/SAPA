@@ -224,6 +224,8 @@
       }
     );
   };
+
+
 $("#one").on('change',function () {
     var cur_val_one = this.value;
      $("#two").children().each(function (e){
@@ -271,9 +273,9 @@ $("#two").on('change',function () {
     $.ajax({
       url: endp,
       method: "POST",
-      data: JSON.stringify(d_send),
+      data: d_send,
       cache: false,
-      processData: false,
+      processData: true,
       dataType: "json",
       beforeSend: function () {
           console.log('d_s',d_send);
