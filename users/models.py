@@ -26,7 +26,7 @@ class Region(models.Model):
 
 class Constituency(models.Model):
     name = models.CharField(max_length=100)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, null=True, related_name="constituencies")
+    country = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, null=True, related_name="constituencies")
 
 
     class Meta:
