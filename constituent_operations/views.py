@@ -538,12 +538,20 @@ class ApproveActionPlanView(APIView):
         x = data['problem_titles'].value
         y = data['stats'].value
 
+        # def addlabels(x,y):
+        #     for i in range(len(x)):
+        #     plt.text(i,y[i],y[i])
+
+        def addlabels(x,y):
+            for i in range(len(x)):
+                plt.text(i,y[i], y[i])
+
+
         try:
             figure = BytesIO()
             
             plt.bar(x, y)
-            plt.xlabel = x
-            plt.ylabel = y
+            addlabels(x,y)
             plt.savefig(figure)
             
 
