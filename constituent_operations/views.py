@@ -489,7 +489,7 @@ class ActionPlanView(APIView):
             except Exception as e:
                 act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=prob, constituency=constituency)
                 act_plan.total_participants = int(act_plan.total_participants) + 1
-                act_plan.total_rating = act_plan.total_rating + int(acp_values[request.data[prob]])
+                act_plan.total_rating = act_plan.total_rating + int(acp_values[request.data[prob][0]])
                 act_plan.save()
                 act_plan.participants.add(user)
 

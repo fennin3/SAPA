@@ -250,6 +250,8 @@ $("#two").on('change',function () {
 });
 
 
+
+
   $("#send_action_data").on("click", function (e) {
     e.preventDefault();
 
@@ -260,15 +262,17 @@ $("#two").on('change',function () {
 
     var endp = `https://nsrohub.herokuapp.com/constituent-operations/send-action-plan/${user_details.system_id_for_user}/`;
 
+    var _one = $("#one").val(), _two = $("#two").val(), _three = $("#three");
+s
+
     $.ajax({
       url: endp,
       method: "POST",
-      data: action_form.serialize(),
+      data: JSON.stringify({_one:'one',_two:'two',_three:'three'}),
       cache: false,
       processData: false,
       dataType: "json",
       beforeSend: function () {
-        console.log("actp", action_form.serialize());
         KTUtil.btnWait(actionBtn, _buttonSpinner, "Processing", true);
       },
       success: function (data) {
