@@ -4,7 +4,7 @@ from django.core.files.base import ContentFile
 from mp_operations.serializers import UserSerializer
 from users.models import Constituency, Constituent
 from mp_operations.serializers import CreateProjectSerializer
-from constituent_operations.serializers import ApproveActionPlanSerializer, CommentOnPostSerializer, GetUserInfoSerializer, ListProjectsOfMPs, ProblemForActionPlanSerializer, RNSendIncidentReportSerializer, RetrieveConstituentConstituenciesSerializer, RetrieveMessageSerializer, SendMessageSerializer, RNSendRequestFormSerializer
+from constituent_operations.serializers import ApproveActionPlanSerializer ,  CommentOnPostSerializer, GetUserInfoSerializer, ListProjectsOfMPs, ProblemForActionPlanSerializer, RNSendIncidentReportSerializer, RetrieveConstituentConstituenciesSerializer, RetrieveMessageSerializer, SendMessageSerializer, RNSendRequestFormSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -13,8 +13,9 @@ from mp_operations.models import ActionPlanAreaSummaryForMp, Comment, Project
 from datetime import datetime
 import matplotlib.pyplot as plt
 import os
-from .models import RequestForm, ActionPlanToAssemblyMan, IncidentReport, Message, ProblemsForActionPlan, ApprovedActionPlan
+from .models import RequestForm, ActionPlanToAssemblyMan, IncidentReport, Message, ProblemsForActionPlan, ApprovedActionPlan, ActionPlanParticipants
 from io import BytesIO
+from django.db.models import  Sum
 
 
 
@@ -438,33 +439,46 @@ class ActionPlanView(APIView):
 
         problem_titles = []
 
-        for i in ap:
-            problem_titles.append(i.title)
+        # for a in request.data.keys():
+        #     print(a)
 
 
+        for title_ in request.data.keys():
+            problem_titles.append(title_)
+
+
+        # for i in ap:
+        #     problem_titles.append(i.title)
+
+        
+
+
+        a = []
         for prob in problem_titles:
             try:
-                act_plan = ActionPlanToAssemblyMan.objects.get(area=area,problem_title=prob, constituency=constituency, date__year=year)
-                if user in act_plan.participants.all():
+                ac_p = ActionPlanParticipants.objects.get(year=year,user=user)
 
-                    print("===================++++++++++++++++++++========================")
-                    data = {
-                        "status":status.HTTP_400_BAD_REQUEST,
-                        "message":"You have already sent your feedback."
-                    }
-                else:
-                    print("--------------------------------------------------------------")
-                    act_plan.participants.add(user)
-                    act_plan.total_participants = int(act_plan.total_participants) + 1
-                    print("===================++++++++++++++++++++========================")
-                    act_plan.total_rating = act_plan.total_rating + int(request.data[prob][0])
-                    print("===================++++++++++++++++++++========================")
-                    act_plan.save()
 
-                    data = {
-                        "status":status.HTTP_200_OK,
-                        "message":"Thank you for your feedback."
-                    }
+                print("-------------------------------")
+                print(ac_p)
+
+                print("--------------------------------")
+
+                # if ac_p is not None:
+                    
+                data = {
+                    "status":status.HTTP_400_BAD_REQUEST,
+                    "message":"You have already sent your feedback."
+                }
+                # else:
+                #     act_plan.participants.add(user)
+                #     act_plan.total_participants = int(act_plan.total_participants) + 1
+                #     act_plan.total_rating = act_plan.total_rating + int(request.data[prob][0])
+                #     act_plan.save()
+                #     data = {
+                #         "status":status.HTTP_200_OK,
+                #         "message":"Thank you for your feedback."
+                #     }
             except Exception as e:
                 act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=prob, constituency=constituency)
                 act_plan.total_participants = int(act_plan.total_participants) + 1
@@ -472,11 +486,17 @@ class ActionPlanView(APIView):
                 act_plan.save()
                 act_plan.participants.add(user)
 
+                a.append(1)
+
+                
+
                 data = {
                     "status":status.HTTP_200_OK,
-                    "message":"Thank you for your feedback.----"
+                    "message":"Thank you for your feedback."
                 }
-    
+        if len(a) > 0:
+            ac_p = ActionPlanParticipants.objects.create(year=year,user=user)
+            ac_p.save()
         return Response(data, status.HTTP_200_OK)
 
 class RetrieveActionPlanStatForAssemblyMan(APIView):
@@ -485,14 +505,19 @@ class RetrieveActionPlanStatForAssemblyMan(APIView):
     def get(self, request, id, date):
         user = User.objects.get(system_id_for_user=id)
 
-        action_plans = ActionPlanToAssemblyMan.objects.filter(date__year=date, area=user.active_area, constituency=user.active_constituency)
+        # problems = ProblemsForActionPlan.objects.all()
+
+        # for prob in problems:
+
+        # action_plans = ActionPlanToAssemblyMan.objects.filter(date__year=date, area=user.active_area, constituency=user.active_constituency).annotate(totals=Sum('price'))
+        ac = ActionPlanToAssemblyMan.objects.values('problem_title').annotate(total=Sum('total_rating'))
 
         prob_titles=[]
         stats =[]
 
-        for ap in action_plans:
-            prob_titles.append(ap.problem_title)
-            stats.append(ap.avg_rating())
+        for ac in ac:
+            prob_titles.append(ac['problem_title'])
+            stats.append(ac['total'])
         
         data = {
             "status":status.HTTP_200_OK,
@@ -524,6 +549,7 @@ class ApproveActionPlanView(APIView):
             ap = ActionPlanAreaSummaryForMp.objects.create(
                 constituency = user.active_constituency,
                 area = user.active_area,
+                comment = data['comment'].value
             )
 
             ap.image.save("stats_image.jpg", content_file)
@@ -537,6 +563,7 @@ class ApproveActionPlanView(APIView):
 
             return Response(data, status.HTTP_200_OK)
         except Exception as e:
+            print(e)
             data = {
                 "status":status.HTTP_400_BAD_REQUEST,
                 "message":f"Action plan summary of {user.active_area.name} was not approved, try again."

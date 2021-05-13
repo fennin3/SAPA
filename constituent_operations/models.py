@@ -73,4 +73,12 @@ class ProblemsForActionPlan(models.Model):
 class ApprovedActionPlan(models.Model):
     year = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class ActionPlanParticipants(models.Model):
+    year = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class  Meta:
+        verbose_name_plural="Action Plan Participants"
     
