@@ -444,63 +444,45 @@ class ActionPlanView(APIView):
 
         ap = ProblemsForActionPlan.objects.all()
 
-        problem_titles = []
-
-        # for a in request.data.keys():
-        #     print(a)
+        try:
+            ac_p = ActionPlanParticipants.objects.get(year=year,user=user)
 
 
-        for title_ in request.data.keys():
-            problem_titles.append(title_)
-
-
-        # for i in ap:
-        #     problem_titles.append(i.title)
-
-        
-
-
-        a = []
-        for prob in problem_titles:
-            try:
-                ac_p = ActionPlanParticipants.objects.get(year=year,user=user)
-
-
-                # if ac_p is not None:
-                    
-                data = {
-                    "status":status.HTTP_400_BAD_REQUEST,
-                    "message":"You have already sent your feedback."
-                }
-                # else:
-                #     act_plan.participants.add(user)
-                #     act_plan.total_participants = int(act_plan.total_participants) + 1
-                #     act_plan.total_rating = act_plan.total_rating + int(request.data[prob][0])
-                #     act_plan.save()
-                #     data = {
-                #         "status":status.HTTP_200_OK,
-                #         "message":"Thank you for your feedback."
-                #     }
-            except Exception as e:
-
-                keys_ = request.data.keys()
+            # if ac_p is not None:
                 
-                for key_ in keys_:
-                    
-                    act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=str(request.data[key_]), constituency=constituency)
-                    act_plan.total_participants = int(act_plan.total_participants) + 1
-                    act_plan.total_rating = act_plan.total_rating + int(acp_values[key_])
-                    act_plan.save()
-                    act_plan.participants.add(user)
+            data = {
+                "status":status.HTTP_400_BAD_REQUEST,
+                "message":"You have already sent your feedback."
+            }
+            # else:
+            #     act_plan.participants.add(user)
+            #     act_plan.total_participants = int(act_plan.total_participants) + 1
+            #     act_plan.total_rating = act_plan.total_rating + int(request.data[prob][0])
+            #     act_plan.save()
+            #     data = {
+            #         "status":status.HTTP_200_OK,
+            #         "message":"Thank you for your feedback."
+            #     }
+        except Exception as e:
 
-                    a.append(1)
-
+            keys_ = request.data.keys()
+            
+            for key_ in keys_:
                 
+                act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=str(request.data[key_]), constituency=constituency)
+                act_plan.total_participants = int(act_plan.total_participants) + 1
+                act_plan.total_rating = act_plan.total_rating + int(acp_values[key_])
+                act_plan.save()
+                act_plan.participants.add(user)
 
-                data = {
-                    "status":status.HTTP_200_OK,
-                    "message":"Thank you for your feedback."
-                }
+                a.append(1)
+
+            
+
+            data = {
+                "status":status.HTTP_200_OK,
+                "message":"Thank you for your feedback."
+            }
         if len(a) > 0:
             ac_p = ActionPlanParticipants.objects.create(year=year,user=user)
             ac_p.save()
