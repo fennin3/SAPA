@@ -262,16 +262,21 @@ $("#two").on('change',function () {
 
     var endp = `https://nsrohub.herokuapp.com/constituent-operations/send-action-plan/${user_details.system_id_for_user}/`;
 
-    var _one = $("#one").val(), _two = $("#two").val(), _three = $("#three");
-
+    var _one = $("#one").val(), _two = $("#two").val(), _three = $("#three").val();
+    var d_send = {
+        _one,
+        _two,
+        _three
+    }
     $.ajax({
       url: endp,
       method: "POST",
-      data: JSON.stringify({_one:'one',_two:'two',_three:'three'}),
+      data: JSON.stringify(d_send),
       cache: false,
       processData: false,
       dataType: "json",
       beforeSend: function () {
+          console.log('d_s',d_send);
         KTUtil.btnWait(actionBtn, _buttonSpinner, "Processing", true);
       },
       success: function (data) {
