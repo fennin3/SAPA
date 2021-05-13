@@ -29,9 +29,9 @@ User = get_user_model()
 # path_ = os.getcwd()
 
 acp_values = {
-    "one":3,
-    "two":2,
-    "three":1
+    "_one":3,
+    "_two":2,
+    "_three":1
 }
 
 
@@ -466,11 +466,6 @@ class ActionPlanView(APIView):
                 ac_p = ActionPlanParticipants.objects.get(year=year,user=user)
 
 
-                print("-------------------------------")
-                print(ac_p)
-
-                print("--------------------------------")
-
                 # if ac_p is not None:
                     
                 data = {
@@ -487,13 +482,18 @@ class ActionPlanView(APIView):
                 #         "message":"Thank you for your feedback."
                 #     }
             except Exception as e:
-                act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=prob, constituency=constituency)
-                act_plan.total_participants = int(act_plan.total_participants) + 1
-                act_plan.total_rating = act_plan.total_rating + int(acp_values[request.data[prob]])
-                act_plan.save()
-                act_plan.participants.add(user)
 
-                a.append(1)
+                keys_ = request.data.keys()
+                
+                for key_ in keys_:
+                    
+                    act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=str(request.data[key_][0]), constituency=constituency)
+                    act_plan.total_participants = int(act_plan.total_participants) + 1
+                    act_plan.total_rating = act_plan.total_rating + int(acp_values[key_])
+                    act_plan.save()
+                    act_plan.participants.add(user)
+
+                    a.append(1)
 
                 
 
