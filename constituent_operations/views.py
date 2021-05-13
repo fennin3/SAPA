@@ -487,7 +487,7 @@ class ActionPlanView(APIView):
                 
                 for key_ in keys_:
                     
-                    act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=str(request.data[key_][0]), constituency=constituency)
+                    act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=str(request.data[key_]), constituency=constituency)
                     act_plan.total_participants = int(act_plan.total_participants) + 1
                     act_plan.total_rating = act_plan.total_rating + int(acp_values[key_])
                     act_plan.save()
