@@ -232,6 +232,12 @@ $("#one").on('change',function () {
                $(this).attr('hidden',true);
            }
        });
+     $("#three").children().each(function (e){
+          $(this).removeAttr('hidden');
+           if ($(this).val()===cur_val_one) {
+               $(this).attr('hidden',true);
+           }
+       });
 });
 $("#two").on('change',function () {
     var cur_val_two = this.value;
