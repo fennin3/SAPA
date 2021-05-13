@@ -15,6 +15,9 @@ from rest_framework import status
 from django.core.mail import EmailMessage
 from django.shortcuts import get_object_or_404
 from users.serializers import ConstituentRegisterSerializer, countryCode
+from io import  BytesIO
+from django.core.files.base import ContentFile
+import requests
 from users.utils import generate_OTP, generate_userID, send_sms, sending_mail
 
 
@@ -80,7 +83,7 @@ class CustomListProjectView(APIView):
 
 
     def post(self, request, id):
-        projects = Project.objects.filter(mp__system_id_for_user=id)
+        projects = Project.objects.filter(mp__system_id_for_user=id, is_post=False)
 
         len(projects)
 
@@ -811,6 +814,45 @@ class AllUsersInACountry(APIView):
             "status":status.HTTP_200_OK,
             "data":data.data
         }, status=status.HTTP_200_OK)
+
+
+class ShareAsPostView(APIView):
+    permission_classes=()
+
+    def post(self, request, id):
+        user = User.objects.get(system_id_for_user=id)
+
+
+        area = request.data['data']['area']['name']
+
+        image = requests.get(request.data['data']['image']).content
+
+        title = f"{area} Action Plan Summary"
+
+        comment = request.data['comment']
+
+        image = ContentFile(image)
+
+        project = Project.objects.create(
+            mp = user,
+            name = title,
+            description = comment,
+            place = area,
+            is_post=True
+        )
+
+        project.media.save("shared_data.jpg", image)
+
+        project.save()
+
+
+        data = {
+            "status":status.HTTP_200_OK,
+            "message":f"{area} Action Plan Summary has been shared."
+        }
+
+        return Response(data,status=status.HTTP_200_OK)
+
 
 
 
