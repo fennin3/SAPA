@@ -381,7 +381,7 @@ $("#two").on('change',function () {
 </div></div><div class="pt-4">${
                   feeds[feed].media === null
                     ? ""
-                    : `<div class="bgi-no-repeat bgi-size-cover rounded min-h-265px" style="background-image: url(${feeds[feed].media})"></div>`
+                    : `<div class="bgi-no-repeat bgi-size-contain rounded min-h-265px" style="background-image: url(${feeds[feed].media})"></div>`
                 }
 <p class="text-dark-75 font-size-lg font-weight-normal pt-5 mb-2">${
                   feeds[feed].description
