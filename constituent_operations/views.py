@@ -546,7 +546,12 @@ class ApproveActionPlanView(APIView):
                 plt.text(i,y[i], y[i])
 
 
+
         try:
+
+            app_ = ApprovedActionPlan.objects.create(year=year, user=user)
+
+            app_.save()
             figure = BytesIO()
             
             plt.bar(x, y)
