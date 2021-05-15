@@ -1,6 +1,7 @@
 from users.models import Area, Constituency
 from django.db import models
 from django.contrib.auth import get_user_model
+from mp_operations.models import Project
 
 
 User = get_user_model()
@@ -81,4 +82,13 @@ class ActionPlanParticipants(models.Model):
 
     class  Meta:
         verbose_name_plural="Action Plan Participants"
+
+
+
+class Assessment(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    constituency = models.ForeignKey(Constituency, on_delete=models.CASCADE)
+    assessment = models.CharField(max_length=100)
+
+
     

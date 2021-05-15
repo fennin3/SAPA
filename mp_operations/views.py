@@ -860,13 +860,17 @@ class ShareAsPostView(APIView):
 class ShareAllAtOnce(APIView):
     permission_classes=()
 
-    def post(self, request, id):
+    def post(self, request, id, date):
         user = User.objects.get(system_id_for_user=id)
 
-        for action_plan in request.data['data']:
-            area = action_plan['area']
+        action_plans = ActionPlanAreaSummaryForMp.objects.filter(date__year=date, area=user.active_area, constituency=user.active_constituency)
 
-            image = requests.get(action_plan['image']).content
+
+
+        for action_plan in action_plans:
+            area = action_plan.area.name
+
+            image = requests.get(action_plan.image).content
 
             title = f"{area} Action Plan Summary"
 

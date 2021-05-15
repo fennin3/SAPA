@@ -734,7 +734,14 @@ class ReplyNotification(APIView):
         )
 
 
+class SendAssessment(APIView):
+    permission_classes=()
 
+    def post(self, request, id):
+        user = User.objects.get(system_id_for_user=id)
+        const = user.active_constituency
+
+        
 
 
 

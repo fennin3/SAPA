@@ -94,6 +94,12 @@ class ActionPlanSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=100)
     )
 
+
+class AssessmentSerializer(serializers.Serializer):
+    data = serializers.DictField(
+        child=serializers.CharField(max_length=100)
+    )
+
 class ApproveActionPlanSerializer(serializers.Serializer):
     problem_titles = serializers.ListField(child=serializers.CharField(max_length=100))
     stats = serializers.ListField(child=serializers.IntegerField())
