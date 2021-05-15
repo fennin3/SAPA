@@ -855,10 +855,6 @@ class ShareAsPostView(APIView):
 
         return Response(data,status=status.HTTP_200_OK)
 
-
-
-
-
 class ShareAllAtOnce(APIView):
     permission_classes=()
 
@@ -866,13 +862,17 @@ class ShareAllAtOnce(APIView):
         user = User.objects.get(system_id_for_user=id)
 
         action_plans = ActionPlanAreaSummaryForMp.objects.filter(date__year=date, area=user.active_area, constituency=user.active_constituency)
+        data = RetrieveActionPlanSummaryEachAreaForMPSerializer(action_plans, many=True)
 
 
+        print("**********************************")
+        print(data.data)
 
-        for action_plan in action_plans:
-            area = action_plan.area.name
 
-            image = requests.get(base_url + str(action_plan.image)).content
+        for action_plan in data.data:
+            area = action_plan['area']['name']
+
+            image = requests.get(str(action_plan['image'])).content
 
             title = f"{area} Action Plan Summary"
 
