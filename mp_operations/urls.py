@@ -48,7 +48,6 @@ urlpatterns = [
     path("get-users-in-country/<country>/", AllUsersInACountry.as_view(), name="users"),
 
     # Share action plan as Post...datetime A combination of a date and a time. Attributes: ()
-
     path("share-action-plan/<id>/", ShareAsPostView.as_view(), name="share_as_post"),
     path("share-all-action-plan/<id>/<date>/", ShareAllAtOnce.as_view(), name="share_all_as_post"),
     

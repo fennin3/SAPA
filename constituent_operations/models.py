@@ -86,9 +86,17 @@ class ActionPlanParticipants(models.Model):
 
 
 class Assessment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     constituency = models.ForeignKey(Constituency, on_delete=models.CASCADE)
     assessment = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+
+
+class AssessmentParticipant(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    year = models.IntegerField()
 
 
     

@@ -21,6 +21,8 @@ import requests
 from users.utils import generate_OTP, generate_userID, send_sms, sending_mail
 
 
+base_url = "https://sapa-bucket.s3.amazonaws.com/"
+
 
 class CreateProjectView(CreateAPIView):
     serializer_class = CreateProjectSerializer
@@ -870,7 +872,7 @@ class ShareAllAtOnce(APIView):
         for action_plan in action_plans:
             area = action_plan.area.name
 
-            image = requests.get(action_plan.image).content
+            image = requests.get(base_url + str(action_plan.image)).content
 
             title = f"{area} Action Plan Summary"
 

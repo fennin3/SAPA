@@ -13,7 +13,7 @@ from mp_operations.models import ActionPlanAreaSummaryForMp, Comment, Project
 from datetime import datetime
 import matplotlib.pyplot as plt
 import os
-from .models import RequestForm, ActionPlanToAssemblyMan, IncidentReport, Message, ProblemsForActionPlan, ApprovedActionPlan, ActionPlanParticipants
+from .models import RequestForm, ActionPlanToAssemblyMan, IncidentReport, Message, ProblemsForActionPlan, ApprovedActionPlan, ActionPlanParticipants, Assessment, AssessmentParticipant
 from io import BytesIO
 from django.db.models import  Sum
 import requests
@@ -734,14 +734,88 @@ class ReplyNotification(APIView):
         )
 
 
-class SendAssessment(APIView):
+# Untested Endpoints
+
+class RetrieveProjectsForAssessmentView(APIView):
+    permission_classes=()
+    def get(self, request,id):
+        user =  User.objects.get(system_id_for_user=id)
+        const = user.active_constituency
+        area = user.active_area
+        mp = user
+
+        for mem in const.members.all():
+            if mem.is_mp == True:
+                mp = mem
+
+
+
+        projects = Project.objects.filter(mp=mp, date_posted__year=year)
+
+        projects = ListProjectsOfMPs(projects, many=True)
+
+        return Response(
+            {
+            "status":status.HTTP_200_OK,
+            "data":projects.data
+            })
+
+
+class SendAssessmentView(APIView):
     permission_classes=()
 
     def post(self, request, id):
         user = User.objects.get(system_id_for_user=id)
         const = user.active_constituency
 
-        
+
+        try:
+            ass_part = AssessmentParticipant.objects.get(user=user)
+
+            data = {
+            "status":status.HTTP_400_BAD_REQUEST,
+            "message":"Sorry, you have already sent your feedback."
+            }
+
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            print(e)
+
+
+
+
+            projects = request.data.keys()
+
+
+
+            for project in projects:
+                project = Project.objects.get(id=project)
+
+                assessment = Assessment.objects.create(
+                    user=user,
+                    project=project,
+                    constituency=const,
+                    assessment=request.data['project']
+                )
+
+                assessment.save()
+
+            ass_p = AssessmentParticipant.objects.create(
+                user=user,
+                year=year,
+            )
+
+            ass_p.save()
+
+            
+            
+            data = {
+                "status":status.HTTP_200_OK,
+                "message":"Thank you for your Feedback."
+            }
+
+            return Response(data, status=status.HTTP_200_OK)
 
 
 
