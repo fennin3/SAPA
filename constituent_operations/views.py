@@ -441,7 +441,6 @@ class ActionPlanView(APIView):
     permission_classes=()
     def post(self, request, id):
 
-        print(request.data)
         user = User.objects.get(system_id_for_user=id)
         area = user.active_area
         constituency = user.active_constituency
@@ -458,6 +457,9 @@ class ActionPlanView(APIView):
 
 
         a = []
+        keys_ = request.data.keys()
+
+        print(keys_)
         
         try:
             ac_p = ActionPlanParticipants.objects.get(year=year,user=user)
@@ -483,6 +485,7 @@ class ActionPlanView(APIView):
             keys_ = request.data.keys()
             
             for key_ in keys_:
+                print(key_)
                 
                 act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=str(request.data[key_]), constituency=constituency)
                 act_plan.total_participants = int(act_plan.total_participants) + 1

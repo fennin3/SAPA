@@ -54,7 +54,9 @@ urlpatterns = [
     # Assessment
     path("retrieve-assessment-summary/<id>/<year>/", RetrieveAssessmentView.as_view(), name="mp_assessment"),
 
-    path("create-post/", CreatePostView.as_view(), name="create_post")
+    path("create-post/", CreatePostView.as_view(), name="create_post"),
+
+    path("action-plan-overall-summary/<id>/<year>/", RetrieveActionPlanOverview.as_view(),name="overview")
 
 
 

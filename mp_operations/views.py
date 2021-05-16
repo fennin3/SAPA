@@ -19,8 +19,8 @@ from io import  BytesIO
 from django.core.files.base import ContentFile
 import requests
 from users.utils import generate_OTP, generate_userID, send_sms, sending_mail
-from constituent_operations.models import Assessment, ConductAssessment, ConductsForAssessment
-from django.db.models import Count
+from constituent_operations.models import Assessment, ConductAssessment, ConductsForAssessment, ActionPlanToAssemblyMan
+from django.db.models import Count, Sum
 
 
 
@@ -38,7 +38,7 @@ class CreateProjectView(CreateAPIView):
         try:
             user = User.objects.get(system_id_for_user=user_id)
         except Exception:
-            raise serializers.ValidationError("Invalid ID provided")
+            pass
 
         project = Project.objects.create(
             mp = user,
@@ -1007,6 +1007,33 @@ class CreatePostView(APIView):
         }
 
         return Response(data, status=status.HTTP_200_OK)
+
+class RetrieveActionPlanOverview(APIView):
+    permission_classes=()
+
+    def get(self, request, id, year):
+        user = User.objects.get(system_id_for_user=id)
+        const = user.active_constituency
+
+        action_plan = ActionPlanToAssemblyMan.objects.filter(constituency=const, date__year=year).values("problem_title").annotate(total_rating=Sum('total_rating'))
+        print(action_plan)
+        problem_title=[]
+        total_rating=[]
+        for i in action_plan:
+            problem_title.append(i['problem_title'])
+            total_rating.append(i['total_rating'])
+
+    
+        return Response({
+            "status":status.HTTP_200_OK,
+            "data":{
+                "problem_titles":problem_title,
+                "total_ratings":total_rating
+                
+            }
+        }, status=status.HTTP_200_OK)
+
+
 
 
 

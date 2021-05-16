@@ -2,7 +2,7 @@ from constituent_operations.views import GetUserInfoView
 from django.urls import path
 from .views import *
 from superadmin_operations.views import RetrieveActionPlanSwitchStatus
-from .consumer import LiveMessenger
+# from .consumer import LiveMessenger
 
 
 urlpatterns = [
@@ -20,5 +20,4 @@ urlpatterns = [
     path("all-towns/<id>/", ListTownView.as_view(), name="emma_towns"),
     path("all-areas/<id>/", ListAreaView.as_view(), name="emma_area"),
 
-    path("message-list/", LiveMessenger.as_asgi(), name="aa")
 ]
