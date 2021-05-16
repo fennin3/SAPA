@@ -750,7 +750,7 @@ class RetrieveProjectsForAssessmentView(APIView):
 
 
 
-        projects = Project.objects.filter(mp=mp, date_posted__year=year)
+        projects = Project.objects.filter(mp=mp, date_posted__year=year, is_post=False)
         cond = ConductsForAssessment.objects.all()
 
         projects = ListProjectsOfMPs(projects, many=True)
