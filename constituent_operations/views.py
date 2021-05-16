@@ -4,7 +4,11 @@ from django.core.files.base import ContentFile
 from mp_operations.serializers import UserSerializer
 from users.models import Constituency, Constituent
 from mp_operations.serializers import CreateProjectSerializer
-from constituent_operations.serializers import ApproveActionPlanSerializer ,  CommentOnPostSerializer, GetUserInfoSerializer, ListProjectsOfMPs, ProblemForActionPlanSerializer, RNSendIncidentReportSerializer, RetrieveConstituentConstituenciesSerializer, RetrieveMessageSerializer, SendMessageSerializer, RNSendRequestFormSerializer
+from constituent_operations.serializers import ApproveActionPlanSerializer , \
+    CommentOnPostSerializer, GetUserInfoSerializer, ListProjectsOfMPs, ProblemForActionPlanSerializer, RNSendIncidentReportSerializer, RetrieveConstituentConstituenciesSerializer, RetrieveMessageSerializer, \
+    SendMessageSerializer, RNSendRequestFormSerializer, ConductForAssessmentSerializer
+
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -13,7 +17,7 @@ from mp_operations.models import ActionPlanAreaSummaryForMp, Comment, Project
 from datetime import datetime
 import matplotlib.pyplot as plt
 import os
-from .models import RequestForm, ActionPlanToAssemblyMan, IncidentReport, Message, ProblemsForActionPlan, ApprovedActionPlan, ActionPlanParticipants, Assessment, AssessmentParticipant
+from .models import RequestForm, ActionPlanToAssemblyMan, IncidentReport, Message, ProblemsForActionPlan, ApprovedActionPlan, ActionPlanParticipants, Assessment, AssessmentParticipant, ConductAssessment, ConductsForAssessment
 from io import BytesIO
 from django.db.models import  Sum
 import requests
@@ -735,10 +739,11 @@ class ReplyNotification(APIView):
 
 
 # Untested Endpoints
+# New features
 
 class RetrieveProjectsForAssessmentView(APIView):
     permission_classes=()
-    def get(self, request,id):
+    def get(self, request,id, year):
         user =  User.objects.get(system_id_for_user=id)
         const = user.active_constituency
         area = user.active_area
@@ -751,14 +756,39 @@ class RetrieveProjectsForAssessmentView(APIView):
 
 
         projects = Project.objects.filter(mp=mp, date_posted__year=year)
+        cond = ConductsForAssessment.objects.all()
 
         projects = ListProjectsOfMPs(projects, many=True)
+        cond = ConductForAssessmentSerializer(cond,many=True)
+
 
         return Response(
             {
             "status":status.HTTP_200_OK,
-            "data":projects.data
+            "projects":projects.data,
+            "conducts":cond.data
             })
+
+
+
+# class RetrieveConductForAssessment(APIView):
+
+
+
+class RetrieveConductsForAssessmentView(APIView):
+    permission_classes=()
+
+    def get(self, request):
+
+        cond = ConductsForAssessment.objects.all()
+
+        data = ConductForAssessmentSerializer(cond, many=True)
+
+        return Response(
+            {
+                "data":data.data
+            }
+        )
 
 
 class SendAssessmentView(APIView):
@@ -782,21 +812,15 @@ class SendAssessmentView(APIView):
         except Exception as e:
             print(e)
 
-
-
-
-            projects = request.data.keys()
-
-
-
-            for project in projects:
-                project = Project.objects.get(id=project)
+            # Creating Projects assessment objects
+            for project in request.data['projects_assessment'].keys():
+                project_ = Project.objects.get(id=int(project))
 
                 assessment = Assessment.objects.create(
                     user=user,
-                    project=project,
+                    project=project_,
                     constituency=const,
-                    assessment=request.data['project']
+                    assessment=request.data["projects_assessment"][project]
                 )
 
                 assessment.save()
@@ -807,6 +831,18 @@ class SendAssessmentView(APIView):
             )
 
             ass_p.save()
+
+
+            for i in request.data['conduct_assessment'].keys():
+                cond = ConductAssessment.objects.create(
+                    user =user,
+                    constituency=const,
+                    assessment=request.data['conduct_assessment'][i]
+                )
+
+                cond.save()
+
+
 
             
             

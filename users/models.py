@@ -84,6 +84,7 @@ class CustomUser(AbstractUser):
     active_area = models.ForeignKey(Area, on_delete=models.CASCADE, blank=True, null=True)
     profile_picture = models.ImageField(upload_to="user_profile_pics/", blank=True, null=True, default="default.jpg")
     is_subadmin = models.BooleanField(default=False)
+    subadmin_for = models.ForeignKey(Constituency, null=True, blank=True, on_delete=models.CASCADE, related_name="subadmins")
     REQUIRED_FIELDS = []
 
     # class Meta:

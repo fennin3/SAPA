@@ -22,5 +22,11 @@ urlpatterns = [
 
     # SUBADMIN URLS
     path("create-project-for-mp/", CreateProjectForMP.as_view(), name="create_project_for_mp"),
-    path("reply-message-for-mp/<id>/", ReplyNotification.as_view(), name="reply_notification")
+    path("reply-message-for-mp/<id>/", ReplyNotification.as_view(), name="reply_notification"),
+
+    # Assessment
+    path("retrive-projects-for-assessment/<id>/<year>/", RetrieveProjectsForAssessmentView.as_view(), name="projects_for_assessment"),
+    path("retrive-conducts-for-assessment/", RetrieveConductsForAssessmentView.as_view(), name="conducts_for_assessment"),
+    path("send-assessment/<id>/", SendAssessmentView.as_view(), name="send_assessment"),
+
 ]

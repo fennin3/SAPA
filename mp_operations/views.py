@@ -19,9 +19,9 @@ from io import  BytesIO
 from django.core.files.base import ContentFile
 import requests
 from users.utils import generate_OTP, generate_userID, send_sms, sending_mail
+from constituent_operations.models import Assessment, ConductAssessment, ConductsForAssessment
+from django.db.models import Count
 
-
-base_url = "https://sapa-bucket.s3.amazonaws.com/"
 
 
 class CreateProjectView(CreateAPIView):
@@ -394,8 +394,6 @@ class RetrieveActionPlanSummaryEachAreaForMPView(APIView):
 
         return Response(data, status.HTTP_200_OK)
 
-
-
 # Unconsumed endpoints.....................................
 class MakeSubAdminView(APIView):
     permission_classes = ()
@@ -409,6 +407,7 @@ class MakeSubAdminView(APIView):
 
             const.is_subadmin=True
             const.user.is_subadmin=True
+            const.user.subadmin_for=mp.user.active_constituency
             const.subadmin_for=mp
 
             const.save()
@@ -537,7 +536,8 @@ class CreateUserAccountForOtherView(CreateAPIView):
                     system_id_for_user=system_id_for_user,
                     is_active=False,
                     active_constituency=constituency,
-                    is_subadmin=True
+                    is_subadmin=True,
+                    subadmin_for=mp.active_constituency
                     )
 
                     user.set_password(request.data['password'])
@@ -756,8 +756,6 @@ class CreateUserAccountForOtherView(CreateAPIView):
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
 class SetPermissionsForSubAdmin(APIView):
     permission_classes=()
 
@@ -799,9 +797,6 @@ class SetPermissionsForSubAdmin(APIView):
         return Response (data,status=status.HTTP_200_OK)
 
         
-    
-
-
 class RetrievePermissionsOfSubAdmin(APIView):
     permission_classes=()          
 
@@ -901,6 +896,86 @@ class ShareAllAtOnce(APIView):
         return Response(data,status=status.HTTP_200_OK)
 
 
+class RetrieveAssessmentView(APIView):
+    permission_classes=()
+
+    def get(self, request, id, year):
+        user = User.objects.get(system_id_for_user=id)
+        const = user.active_constituency
+        # project_names
+
+        options_ = ['Good','Excellent', "Very Good", 'Average', 'Poor']
+
+        data_projects = []
+
+        projects = Project.objects.filter(mp=user, date_posted__year=year)
+        conds = ConductsForAssessment.objects.all()
+        
+
+        for project in projects:
+            assessments = Assessment.objects.filter(constituency=const, date__year=year, project=project).values('assessment').annotate(total_num=Count('assessment'))
+            print(assessments)
+
+            ass_names = []
+            ass_value = []
+
+            
+            for i in assessments:
+                ass_names.append(i['assessment'])
+                ass_value.append(i['total_num'])
+
+            for k in options_:
+                if k not in ass_names:
+                    ass_names.append(k)
+                    ass_value.append(0)
+
+        
+
+            data_projects.append({
+                "project_title":f"{project.name} at {project.place} on {project.date_posted}",
+                "assessement_names":ass_names,
+                "assessment_values":ass_value
+            })
+
+
+
+
+        
+        data_conduct=[]
+
+        for i in conds:
+            
+            cond_ass = ConductAssessment.objects.filter(constituency=const, conduct=i.title).values('assessment').annotate(total_num=Count('assessment'))
+
+            cond_names =[]
+            cond_value=[]
+            for j in cond_ass:    
+                cond_names.append(j['assessment'])
+                cond_value.append(j['total_num'])
+
+            
+            for k in options_:
+                if k not in cond_names:
+                    cond_names.append(k)
+                    cond_value.append(0)
+
+
+            data_conduct.append(
+                {
+                "conduct":i.title,
+                "assessment_names":cond_names,
+                "assessment_value":cond_value
+                }
+            )
+
+            
+        
+
+        
+        return Response({
+            "projects_assessment":data_projects,
+            "conduct_assessment": data_conduct
+        })
 
 
 

@@ -214,6 +214,7 @@ class MPCreateApiView(CreateAPIView):
             try:
                 const = Constituent.objects.get(user__system_id_for_user = id)
                 const.user.is_subadmin = True
+                const.user.subadmin_for = mp.user.active_constituency
                 const.subadmin_for = user
                 const.is_subadmin = True
 

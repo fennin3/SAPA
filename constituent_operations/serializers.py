@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models import fields
 from django.db.models.fields import files
 from users.models import Constituency, Region
-from constituent_operations.models import Message, ProblemsForActionPlan, User
+from constituent_operations.models import Message, ProblemsForActionPlan, User, ConductsForAssessment
 from rest_framework import serializers
 from mp_operations.models import Comment, Project
 from mp_operations.serializers import UserSerializer
@@ -111,4 +111,9 @@ class ProblemForActionPlanSerializer(serializers.ModelSerializer):
          model=ProblemsForActionPlan
          fields=['title']    
 
+
+class ConductForAssessmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=ConductsForAssessment
+        fields="__all__"
 
