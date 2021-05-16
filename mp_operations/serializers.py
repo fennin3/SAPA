@@ -11,9 +11,6 @@ from users.serializers import ListAllAreaSerializer, ListAllConstituencySerializ
 User = get_user_model()
 
 
-
-
-
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -155,4 +152,11 @@ class RetrieveActionPlanSummaryEachAreaForMPSerializer(serializers.ModelSerializ
     class Meta:
         model=ActionPlanAreaSummaryForMp
         fields="__all__"
+
+
+class CreatePostSerializer(serializers.Serializer):
+
+    user_id = serializers.CharField(max_length=15)
+    media = serializers.FileField()
+    caption = serializers.CharField(max_length=5000)
 

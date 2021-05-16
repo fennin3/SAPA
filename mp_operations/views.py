@@ -9,7 +9,7 @@ from .serializers import CreateProjectSerializer, ListConstituentsSerializer, Li
     MPRetrieveAllSubAdminSerializer, RNRetrieveIncidentReportSerializer, RNRetrieveMessageSerializer, \
     RetrieveActionPlanSummaryEachAreaForMPSerializer, SearchConstituentsSerialiser, SearchProjectsSerialiser, \
     SendEmailSerializer, SendEmailToConstSerializer, SendMessageToConstituentSerializer, \
-    RNRetrieveRequestFormSerializer, UserSerializer, PermissionSerializer
+    RNRetrieveRequestFormSerializer, UserSerializer, PermissionSerializer, CreatePostSerializer
 from users.models import Constituency, Constituent, Country, Town, Area, SubAdminPermission, Region, MpProfile, OTPCode, Permission, UserPermissionCust
 from rest_framework import status
 from django.core.mail import EmailMessage
@@ -977,6 +977,36 @@ class RetrieveAssessmentView(APIView):
             "conduct_assessment": data_conduct
         })
 
+class CreatePostView(APIView):
+    permission_classes=()
+
+    def post(self, request):
+        data = CreatePostSerializer(data=request.data)
+
+        data.is_valid(raise_exception=True)
+
+        caption = data.data['caption']
+        image = request.data['media']
+        id = data.data['user_id']
+
+        user = User.objects.get(system_id_for_user=id)
+
+
+        post = Project.objects.create(
+            mp=user,
+            description=caption,
+            media = image,
+            is_post=True
+        )
+
+        post.save()
+
+        data= {
+            "status":status.HTTP_200_OK,
+            "message":"You post has been created."
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
 
 
 

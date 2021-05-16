@@ -27,7 +27,10 @@ class Project(models.Model):
 
 
     def __str__(self):
-        return self.name
+        if self.name:
+            return self.name
+        else:
+            return f"{self.description}"
 
 
 class ActionPlanAreaSummaryForMp(models.Model):

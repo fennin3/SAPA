@@ -52,7 +52,12 @@ urlpatterns = [
     path("share-all-action-plan/<id>/<date>/", ShareAllAtOnce.as_view(), name="share_all_as_post"),
 
     # Assessment
-    path("retrieve-assessment-summary/<id>/<year>/", RetrieveAssessmentView.as_view(), name="mp_assessment")
+    path("retrieve-assessment-summary/<id>/<year>/", RetrieveAssessmentView.as_view(), name="mp_assessment"),
+
+    path("create-post/", CreatePostView.as_view(), name="create_post")
+
+
+
 
     
 ] 
