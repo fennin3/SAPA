@@ -457,9 +457,9 @@ class ActionPlanView(APIView):
 
 
         a = []
-        keys_ = request.data.keys()
+        # keys_ = request.data.keys()
 
-        print(keys_)
+        # print(keys_)
         
         try:
             ac_p = ActionPlanParticipants.objects.get(year=year,user=user)
@@ -471,22 +471,14 @@ class ActionPlanView(APIView):
                 "status":status.HTTP_400_BAD_REQUEST,
                 "message":"You have already sent your feedback."
             }
-            # else:
-            #     act_plan.participants.add(user)
-            #     act_plan.total_participants = int(act_plan.total_participants) + 1
-            #     act_plan.total_rating = act_plan.total_rating + int(request.data[prob][0])
-            #     act_plan.save()
-            #     data = {
-            #         "status":status.HTTP_200_OK,
-            #         "message":"Thank you for your feedback."
-            #     }
+        
         except Exception as e:
 
             keys_ = request.data.keys()
             
             for key_ in keys_:
                 print(key_)
-                
+                print(str(request.data[key_]))
                 act_plan = ActionPlanToAssemblyMan.objects.create(area=area,problem_title=str(request.data[key_]), constituency=constituency)
                 act_plan.total_participants = int(act_plan.total_participants) + 1
                 act_plan.total_rating = act_plan.total_rating + int(acp_values[key_])
