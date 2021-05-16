@@ -6,7 +6,7 @@ from users.models import Constituency, Constituent
 from mp_operations.serializers import CreateProjectSerializer
 from constituent_operations.serializers import ApproveActionPlanSerializer , \
     CommentOnPostSerializer, GetUserInfoSerializer, ListProjectsOfMPs, ProblemForActionPlanSerializer, RNSendIncidentReportSerializer, RetrieveConstituentConstituenciesSerializer, RetrieveMessageSerializer, \
-    SendMessageSerializer, RNSendRequestFormSerializer, ConductForAssessmentSerializer
+    SendMessageSerializer, RNSendRequestFormSerializer, ConductForAssessmentSerializer, AssessmentSerializer
 
 
 from rest_framework.response import Response
@@ -793,6 +793,10 @@ class SendAssessmentView(APIView):
         user = User.objects.get(system_id_for_user=id)
         const = user.active_constituency
 
+        data_ = AssessmentSerializer(request.data)
+
+        
+
 
         try:
             ass_part = AssessmentParticipant.objects.get(user=user)
@@ -808,14 +812,18 @@ class SendAssessmentView(APIView):
             print(e)
 
             # Creating Projects assessment objects
-            for project in request.data['projects_assessment'].keys():
+
+            print("------------4444444%%%%%%%%%%%%_______________________--")
+
+            
+            for project in data_['projects_assessment'].value.keys():
                 project_ = Project.objects.get(id=int(project))
 
                 assessment = Assessment.objects.create(
                     user=user,
                     project=project_,
                     constituency=const,
-                    assessment=request.data["projects_assessment"][project]
+                    assessment=data_["projects_assessment"].value[project]
                 )
 
                 assessment.save()
@@ -827,12 +835,15 @@ class SendAssessmentView(APIView):
 
             ass_p.save()
 
+            
 
-            for i in request.data['conduct_assessment'].keys():
+            
+            for i in data_['conduct_assessment'].value.keys():
                 cond = ConductAssessment.objects.create(
+                    conduct=i,
                     user =user,
                     constituency=const,
-                    assessment=request.data['conduct_assessment'][i]
+                    assessment=data_['conduct_assessment'].value[i]
                 )
 
                 cond.save()

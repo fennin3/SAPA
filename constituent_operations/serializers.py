@@ -117,3 +117,12 @@ class ConductForAssessmentSerializer(serializers.ModelSerializer):
         model=ConductsForAssessment
         fields="__all__"
 
+
+class AssessmentSerializer(serializers.Serializer):
+    projects_assessment=serializers.DictField(
+        child=serializers.CharField(max_length=100)
+        )
+
+    conduct_assessment=serializers.DictField(
+        child=serializers.CharField(max_length=100)
+    )
