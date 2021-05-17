@@ -252,7 +252,7 @@ $("#current_year").text( current_date.getFullYear());
 
 $("#current_year").text( current_date.getFullYear());
  $.get(
-    "http://localhost:8000/constituent-operations/retrieve-years/",
+    "https://nsrohub.herokuapp.com/constituent-operations/retrieve-years/",
     function (data) {
       if (data.status === 200) {
         var years = data.years,
@@ -287,7 +287,7 @@ $("#current_year").text( current_date.getFullYear());
 
       var sendBtn = KTUtil.getById('share_all'),
       _buttonSpinner = "spinner spinner-right spinner-white pr-15",
-          endpoint = `http://localhost:8000/mp-operations/share-all-action-plan/${user_details.system_id_for_user}/${r_year}/`;
+          endpoint = `https://nsrohub.herokuapp.com/mp-operations/share-all-action-plan/${user_details.system_id_for_user}/${r_year}/`;
       $.ajax({
       url: endpoint,
       method: "POST",
@@ -357,7 +357,7 @@ $("#current_year").text( current_date.getFullYear());
 
            var sendBtn = KTUtil.getById("send_plan"),
       _buttonSpinner = "spinner spinner-right spinner-white pr-15",
-      endpoint = `http://localhost:8000/mp-operations/share-action-plan/${user_details.system_id_for_user}/`;
+      endpoint = `https://nsrohub.herokuapp.com/mp-operations/share-action-plan/${user_details.system_id_for_user}/`;
  $.ajax({
       url: endpoint,
       method: "POST",
@@ -418,7 +418,7 @@ $("#current_year").text( current_date.getFullYear());
 
  var showActionPlan = year => {
    $.ajax({
-    url: `http://localhost:8000/mp-operations/retrieve-action-plans-summary/${user_details.system_id_for_user}/${year}/`,
+    url: `https://nsrohub.herokuapp.com/mp-operations/retrieve-action-plans-summary/${user_details.system_id_for_user}/${year}/`,
     method: "GET",
     cache: false,
     dataType: "json",

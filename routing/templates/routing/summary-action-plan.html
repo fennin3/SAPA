@@ -44,7 +44,7 @@
     var apexChart = "#ov_action_sum";
 
     $.get(
-      `http://localhost:8000/mp-operations/action-plan-overall-summary/${user_details.system_id_for_user}/${date}/`,
+      `https://nsrohub.herokuapp.com/mp-operations/action-plan-overall-summary/${user_details.system_id_for_user}/${date}/`,
       function (data) {
 
         if (data.status === 200) {
@@ -96,7 +96,7 @@
   showChart(current_date.getFullYear());
 
   $.get(
-    "http://localhost:8000/constituent-operations/retrieve-years/",
+    "https://nsrohub.herokuapp.com/constituent-operations/retrieve-years/",
     function (data) {
       console.log("datayears", data);
       if (data.status === 200) {

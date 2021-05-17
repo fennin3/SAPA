@@ -233,7 +233,7 @@ $.ajax({
 <<<<<<< HEAD
         url: 'https://nsrohub.herokuapp.com/users/all-countries/',
 =======
-        url: 'http://localhost:8000/users/all-countries/',
+        url: 'https://nsrohub.herokuapp.com/users/all-countries/',
 >>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
         dataType: 'json',
         success: function (data) {
@@ -254,7 +254,7 @@ $.ajax({
 <<<<<<< HEAD
         url: `https://nsrohub.herokuapp.com/mp-operations/get-users-in-country/${user_details.active_constituency.country}/`,
 =======
-        url: `http://localhost:8000/mp-operations/get-users-in-country/${user_details.active_constituency.country}/`,
+        url: `https://nsrohub.herokuapp.com/mp-operations/get-users-in-country/${user_details.active_constituency.country}/`,
 >>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
         dataType: 'json',
         success: function (data) {
@@ -491,7 +491,7 @@ regions.on('change',function (e){
 <<<<<<< HEAD
                   var endpoint = `https://nsrohub.herokuapp.com/mp-operations/create-account-for-others/${user_details.system_id_for_user}/sub_admin/`;
 =======
-                  var endpoint = `http://localhost:8000/mp-operations/create-account-for-others/${user_details.system_id_for_user}/sub_admin/`;
+                  var endpoint = `https://nsrohub.herokuapp.com/mp-operations/create-account-for-others/${user_details.system_id_for_user}/sub_admin/`;
 >>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
                  
                 var $this = $('#add_sub_admin_form'),  signUpBtn = KTUtil.getById('add_sub_admin'), _buttonSpinner= 'spinner spinner-right spinner-white pr-15';
@@ -573,7 +573,7 @@ var uid = $("#suid").val();
 <<<<<<< HEAD
     var endpoint = `https://nsrohub.herokuapp.com/mp-operations/mp-make-subadmin/${user_details.system_id_for_user}/${uid}/`;
 =======
-    var endpoint = `http://localhost:8000/mp-operations/mp-make-subadmin/${user_details.system_id_for_user}/${uid}/`;
+    var endpoint = `https://nsrohub.herokuapp.com/mp-operations/mp-make-subadmin/${user_details.system_id_for_user}/${uid}/`;
 >>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
                  
                 var  signUpBtn = KTUtil.getById('sub_send'), _buttonSpinner= 'spinner spinner-right spinner-white pr-15';
