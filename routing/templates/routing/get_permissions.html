@@ -25,7 +25,6 @@
 </div>
 {% endfor %}
 </form>
-
 <script>
 
   $('.permission-title').text('{{ user.full_name }}\'s Permissions');
@@ -34,7 +33,7 @@
 
     var perm_value = $($this).is(':checked'), perm_name = $($this).data('perm_name'), uid = $($this).data('id');
 
-    var endpoint = `https://ceap.kerokuapp.com/mp-operations/set-permission/${uid}/`;
+    var endpoint = `https://ceap.herokuapp.com/mp-operations/set-permission/${uid}/`;
     $.ajax({
       url: endpoint,
       method: "POST",
