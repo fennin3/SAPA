@@ -115,7 +115,7 @@ $("#current_year").text( current_date.getFullYear());
     success: function (data) {
       if (data.status === 200) {
             var projs_sum = data.projects_assessment, cond_sum = data.conduct_assessment;
-    console.log('ccc',cond_sum);
+
             var project_data = $("#project_assessments"), conduct_data = $("#conduct_assessments");
         if (projs_sum.length >  0 && cond_sum.length > 0) {
 
