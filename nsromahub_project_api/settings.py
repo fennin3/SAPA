@@ -24,11 +24,10 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-<<<<<<< HEAD
-ALLOWED_HOSTS = ["nsrohub.herokuapp.com","localhost","127.0.0.1"]
+ALLOWED_HOSTS = ["nsrohub.herokuapp.com","localhost","127.0.0.1", "*"]
 =======
 ALLOWED_HOSTS = ["*"]
->>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
+
 
 
 # Application definition
@@ -177,11 +176,10 @@ REST_FRAMEWORK = {
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ],
-<<<<<<< HEAD
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
-=======
->>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
+
     # 'DEFAULT_PERMISSION_CLASSES': [
     # 'rest_framework.permissions.IsAuthenticated',
     # ],
