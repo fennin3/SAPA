@@ -1,6 +1,7 @@
 from users.models import Area, Constituency
 from django.db import models
 from django.contrib.auth import get_user_model
+from mp_operations.models import Project
 
 
 User = get_user_model()
@@ -45,8 +46,8 @@ class RequestForm(models.Model):
     
 
 
-class MpsAssessment(models.Model):
-    pass
+# class MpsAssessment(models.Model):
+#     pass
 
 
 class ActionPlanToAssemblyMan(models.Model):
@@ -73,4 +74,47 @@ class ProblemsForActionPlan(models.Model):
 class ApprovedActionPlan(models.Model):
     year = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class ActionPlanParticipants(models.Model):
+    year = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class  Meta:
+        verbose_name_plural="Action Plan Participants"
+
+
+class Assessment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    constituency = models.ForeignKey(Constituency, on_delete=models.CASCADE)
+    assessment = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+
+    def __str__(self):
+        return f"{self.user.full_name}'s Assessment on {self.project.name}"
+
+    
+class AssessmentParticipant(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    year = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.user.full_name} - {self.year}"
+
+
+class ConductsForAssessment(models.Model):
+    title = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.title}"
+
+class ConductAssessment(models.Model):
+    conduct = models.CharField(max_length=100, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    constituency = models.ForeignKey(Constituency, on_delete=models.CASCADE)
+    assessment = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True, null=True, blank=True) 
+
     

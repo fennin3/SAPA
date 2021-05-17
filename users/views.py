@@ -214,13 +214,16 @@ class MPCreateApiView(CreateAPIView):
             try:
                 const = Constituent.objects.get(user__system_id_for_user = id)
                 const.user.is_subadmin = True
+                const.user.subadmin_for = mp.user.active_constituency
                 const.subadmin_for = user
                 const.is_subadmin = True
 
                 const.save()
             except Exception as e:
-                print(e)
-                pass
+                return Response({
+                    "status":status.HTTP_400_BAD_REQUEST,
+                    "message":"User is an MP"
+                })
 
             
             return Response({
@@ -436,4 +439,6 @@ class GetOTPSMSView(APIView):
         }
         return Response(data, status=status.HTTP_200_OK)
 
-            
+
+
+          

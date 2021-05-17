@@ -31,7 +31,10 @@ arr = [
     'get_permissions',
     'action-mp',
     'add-admin',
-    'accounts'
+    'accounts',
+    'assessment',
+    'summary-action-plan',
+    'summary-assessment'
 ]
 
 
