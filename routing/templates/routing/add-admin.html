@@ -230,7 +230,11 @@
         placeholder:'Select Area',
       });
 $.ajax({
+<<<<<<< HEAD
         url: 'https://nsrohub.herokuapp.com/users/all-countries/',
+=======
+        url: 'http://localhost:8000/users/all-countries/',
+>>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
         dataType: 'json',
         success: function (data) {
 
@@ -247,7 +251,11 @@ $.ajax({
 console.log('uuu',user_details)
 $.ajax({
 
+<<<<<<< HEAD
         url: `https://nsrohub.herokuapp.com/mp-operations/get-users-in-country/${user_details.active_constituency.country}/`,
+=======
+        url: `http://localhost:8000/mp-operations/get-users-in-country/${user_details.active_constituency.country}/`,
+>>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
         dataType: 'json',
         success: function (data) {
             if (data.status === 200) {
@@ -480,7 +488,11 @@ regions.on('change',function (e){
 
             validation.validate().then(function(status) {
               if (status == 'Valid') {
+<<<<<<< HEAD
                   var endpoint = `https://nsrohub.herokuapp.com/mp-operations/create-account-for-others/${user_details.system_id_for_user}/sub_admin/`;
+=======
+                  var endpoint = `http://localhost:8000/mp-operations/create-account-for-others/${user_details.system_id_for_user}/sub_admin/`;
+>>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
                  
                 var $this = $('#add_sub_admin_form'),  signUpBtn = KTUtil.getById('add_sub_admin'), _buttonSpinner= 'spinner spinner-right spinner-white pr-15';
                 $.ajax({
@@ -558,7 +570,11 @@ $("#sub_form").on('submit', function(e){
   e.preventDefault();
 
 var uid = $("#suid").val();
+<<<<<<< HEAD
     var endpoint = `https://nsrohub.herokuapp.com/mp-operations/mp-make-subadmin/${user_details.system_id_for_user}/${uid}/`;
+=======
+    var endpoint = `http://localhost:8000/mp-operations/mp-make-subadmin/${user_details.system_id_for_user}/${uid}/`;
+>>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
                  
                 var  signUpBtn = KTUtil.getById('sub_send'), _buttonSpinner= 'spinner spinner-right spinner-white pr-15';
                 $.ajax({

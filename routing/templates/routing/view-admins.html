@@ -93,7 +93,11 @@
         // datasource definition
         data: {
           type: "remote",
+<<<<<<< HEAD
           source: `https://nsrohub.herokuapp.com/mp-operations/retrieve-all-subadmins/${user_details.system_id_for_user}/`,
+=======
+          source: `http://localhost:8000/mp-operations/retrieve-all-subadmins/${user_details.system_id_for_user}/`,
+>>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
           pageSize: 10,
         },
         layout: {
@@ -236,7 +240,11 @@
     var edit_id = $(tthis).data("id");
 
     $.ajax({
+<<<<<<< HEAD
       url: `https://nsrohub.herokuapp.com/pages/pageviews/${edit_id}/`,
+=======
+      url: `http://localhost:8000/pages/pageviews/${edit_id}/`,
+>>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
       type: "POST",
       data: JSON.stringify({ page_name: "get_permissions" }),
       contentType: "application/json; charset=UTF-8",
@@ -286,7 +294,11 @@
     }).then(function (result) {
       if (result.value) {
         $.ajax({
+<<<<<<< HEAD
           url: `https://nsrohub.herokuapp.com/mp-operations/mp-unmake-subadmin/${user_details.system_id_for_user}/${delete_id}/`,
+=======
+          url: `http://localhost:8000/mp-operations/mp-unmake-subadmin/${user_details.system_id_for_user}/${delete_id}/`,
+>>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
           type: "POST",
           dataType: "json",
           cache: false,

@@ -31,7 +31,14 @@ arr = [
     'get_permissions',
     'action-mp',
     'add-admin',
+<<<<<<< HEAD
     'accounts'
+=======
+    'accounts',
+    'assessment',
+    'summary-action-plan',
+    'summary-assessment'
+>>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
 ]
 
 
@@ -49,7 +56,11 @@ class WebPageView(APIView):
         try:
             permission = UserPermissionCust.objects.filter(user__system_id_for_user=id)
         except Exception as e:
+<<<<<<< HEAD
             permission = "hhh"
+=======
+            permission = "null"
+>>>>>>> 4158ec8a7c7e8d1e4390eea4417f5409c35a64c4
 
         if call_ in arr:
 
